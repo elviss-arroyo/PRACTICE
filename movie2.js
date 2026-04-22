@@ -1,6 +1,5 @@
 $(document).ready(function () {
 
-    // my api key dont steal it lol
     var myApiKey = "4ecce31518d3c79af6da91dc53d038d5";
     var smallPic = "https://image.tmdb.org/t/p/w200";
     var medPic = "https://image.tmdb.org/t/p/w342";
@@ -17,7 +16,7 @@ $(document).ready(function () {
     var myAccount = localStorage.getItem("tmdb_account_id") || null;
     var myName = localStorage.getItem("tmdb_username") || null;
 
-    // all the genres i copy pasted from the tmdb website
+    // all the genres from the tmdb website
     var genreList = [
         { id: 28, name: "Action" },
         { id: 12, name: "Adventure" },
@@ -36,7 +35,7 @@ $(document).ready(function () {
         { id: 878, name: "Sci-Fi" }
     ];
 
-    // get stuff from local storage
+    // get from local storage
     function getMyList(listName) {
         return JSON.parse(localStorage.getItem(listName) || "[]");
     }
@@ -73,7 +72,7 @@ $(document).ready(function () {
         }
     }
 
-    // show login/logout stuff
+    //  login/logout 
     function updateLoginArea() {
         if (mySession && myName) {
             $("#authArea").hide();
@@ -382,7 +381,7 @@ $(document).ready(function () {
             });
     }
 
-    // turn api data into usable object
+    // turn api data into object
     function makeMovieObj(m) {
         return {
             id: m.id,
