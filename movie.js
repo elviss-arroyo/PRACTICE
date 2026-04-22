@@ -1,17 +1,41 @@
 $(document).ready(function () {
-    const API_KEY = "4ecce31518d3c79af6da91dc53d038d5";
-    const IMG_SM  = "https://image.tmdb.org/t/p/w200";
-    const IMG_MD  = "https://image.tmdb.org/t/p/w342";
-    const IMG_LG  = "https://image.tmdb.org/t/p/w500";
-    const IMG_CAST= "https://image.tmdb.org/t/p/w185";
-    const BASE    = "https://api.themoviedb.org/3";
+    const API_KEY  = "4ecce31518d3c79af6da91dc53d038d5";
+    const IMG_SM   = "https://image.tmdb.org/t/p/w200";
+    const IMG_MD   = "https://image.tmdb.org/t/p/w342";
+    const IMG_LG   = "https://image.tmdb.org/t/p/w500";
+    const IMG_CAST = "https://image.tmdb.org/t/p/w185";
+    const BASE     = "https://api.themoviedb.org/3";
 
-    let currentQuery = "";
-    let currentPage  = 1;
-    let layout       = "grid";
-    let sessionId    = localStorage.getItem("tmdb_session_id") || null;
-    let accountId    = localStorage.getItem("tmdb_account_id") || null;
-    let username     = localStorage.getItem("tmdb_username")   || null;
+    let currentQuery      = "";
+    let currentPage       = 1;
+    let layout            = "grid";
+    let activeGenreId     = null;
+    let discoverPage      = 1;
+    let sessionId         = localStorage.getItem("tmdb_session_id") || null;
+    let accountId         = localStorage.getItem("tmdb_account_id") || null;
+    let username          = localStorage.getItem("tmdb_username")   || null;
+
+    // All TMDB genres
+    const GENRES = [
+        { id: 28,    name: "Action"      },
+        { id: 12,    name: "Adventure"   },
+        { id: 16,    name: "Animation"   },
+        { id: 35,    name: "Comedy"      },
+        { id: 80,    name: "Crime"       },
+        { id: 99,    name: "Documentary" },
+        { id: 18,    name: "Drama"       },
+        { id: 10751, name: "Family"      },
+        { id: 14,    name: "Fantasy"     },
+        { id: 36,    name: "History"     },
+        { id: 27,    name: "Horror"      },
+        { id: 10402, name: "Music"       },
+        { id: 9648,  name: "Mystery"     },
+        { id: 10749, name: "Romance"     },
+        { id: 878,   name: "Sci-Fi"      },
+        { id: 53,    name: "Thriller"    },
+        { id: 10752, name: "War"         },
+        { id: 37,    name: "Western"     }
+    ];
 
     // ── STORAGE ──────────────────────────────────────────────────
 
@@ -126,7 +150,7 @@ $(document).ready(function () {
     // ── VIEW SWITCHING ────────────────────────────────────────────
 
     function showView(view) {
-        $("#searchView, #collectionView, #listsView").hide();
+        $("#searchView, #discoverView, #collectionView, #listsView").hide();
         $(view).show();
     }
 
@@ -142,6 +166,13 @@ $(document).ready(function () {
         if (e.which === 13) $("#searchBtn").trigger("click");
     });
 
+    $("#discoverBtn").click(function () {
+        showView("#discoverView");
+        buildGenreChips();
+        // Load popular movies by default if no genre selected yet
+        if (!activeGenreId) loadDiscover();
+    });
+
     $("#collectionBtn").click(function () {
         showView("#collectionView");
         loadCollection(28, "#actionMovies");
@@ -153,7 +184,63 @@ $(document).ready(function () {
         renderListsView("favorites");
     });
 
+    // Sort change re-runs discover
+    $("#sortSelect").change(function () {
+        discoverPage = 1;
+        loadDiscover();
+    });
+
     showView("#searchView");
+
+    // ── GENRE CHIPS ───────────────────────────────────────────────
+
+    function buildGenreChips() {
+        if ($("#genreChips").children().length) return; // already built
+        GENRES.forEach(function (g) {
+            const chip = $(`<button class="genre-chip" data-id="${g.id}">${g.name}</button>`);
+            $("#genreChips").append(chip);
+        });
+    }
+
+    $(document).on("click", ".genre-chip", function () {
+        $(".genre-chip").removeClass("active");
+        $(this).addClass("active");
+        activeGenreId = parseInt($(this).data("id"));
+        discoverPage = 1;
+        loadDiscover();
+    });
+
+    // ── DISCOVER / GENRE FILTER ───────────────────────────────────
+
+    function loadDiscover() {
+        const params = {
+            api_key:           API_KEY,
+            sort_by:           $("#sortSelect").val() || "popularity.desc",
+            page:              discoverPage,
+            "vote_count.gte":  50
+        };
+        if (activeGenreId) params.with_genres = activeGenreId;
+
+        $.get(BASE + "/discover/movie", params)
+            .done(function (data) {
+                renderMovies(data.results, "#discoverGrid");
+                buildDiscoverControls(data.total_pages);
+            });
+    }
+
+    function buildDiscoverControls(totalPages) {
+        const template = $("#discover-controls-template").html();
+        const pages = [];
+        for (let i = 1; i <= Math.min(totalPages, 5); i++)
+            pages.push({ number: i, active: i === discoverPage ? "active" : "" });
+
+        $("#discoverControls").html(Mustache.render(template, { pages }));
+
+        $(".discover-page-btn").click(function () {
+            discoverPage = parseInt($(this).data("page"));
+            loadDiscover();
+        });
+    }
 
     // ── LISTS TABS ────────────────────────────────────────────────
 
@@ -244,9 +331,7 @@ $(document).ready(function () {
         const id = movie.id;
         const data = {
             id,
-            poster: movie.poster_path
-                ? IMG_LG + movie.poster_path
-                : "https://via.placeholder.com/500x750/1c1c1c/666?text=No+Image",
+            poster:       movie.poster_path ? IMG_LG + movie.poster_path : "https://via.placeholder.com/500x750/1c1c1c/666?text=No+Image",
             title:        movie.title,
             release_date: movie.release_date || "N/A",
             vote_average: movie.vote_average ? parseFloat(movie.vote_average).toFixed(1) : "N/A",
@@ -261,21 +346,18 @@ $(document).ready(function () {
         const template = $("#details-template").html();
         $("#movieDetails").html(Mustache.render(template, data)).data("movie", movie);
 
-        // Fetch and append cast
+        // Fetch and append cast (top 4 only)
         $.get(BASE + "/movie/" + id + "/credits", { api_key: API_KEY })
             .done(function (credits) {
-                const cast = credits.cast.slice(0, 8);
+                const cast = credits.cast.slice(0, 4);
                 if (!cast.length) return;
 
-                // Director from crew
                 const director = credits.crew.find(p => p.job === "Director");
 
                 let castHTML = '<div class="cast-section">';
-
                 if (director) {
-                    castHTML += `<p class="director-line">🎬 <b>Director:</b> ${director.name}</p>`;
+                    castHTML += `<p class="director-line">🎬 <b>Director:</b> ${$('<div>').text(director.name).html()}</p>`;
                 }
-
                 castHTML += '<h4>Cast</h4><div class="cast-list">';
 
                 cast.forEach(function (actor) {
@@ -318,15 +400,11 @@ $(document).ready(function () {
     function fetchAndToggle(listKey, id) {
         $.get(BASE + "/movie/" + id, { api_key: API_KEY }).done(function (movie) {
             const added = toggleList(listKey, formatSingle(movie));
-
             $(`.fav-btn[data-id='${id}']`).toggleClass("active", isInList("favorites", id));
             $(`.watch-btn[data-id='${id}']`).toggleClass("active", isInList("watchlist", id));
-
             const detailMovie = $("#movieDetails").data("movie");
             if (detailMovie && detailMovie.id === id) showDetails(detailMovie);
-
             if ($("#listsView").is(":visible")) renderListsView($(".list-tab.active").data("list"));
-
             postToTMDB(listKey === "favorites" ? "favorite" : "watchlist", id, added);
         });
     }
@@ -385,7 +463,7 @@ $(document).ready(function () {
         if (isDragging) { isDragging = false; $track.removeClass("dragging"); }
     });
 
-    // ── PAGINATION / LAYOUT ───────────────────────────────────────
+    // ── SEARCH PAGINATION / LAYOUT ────────────────────────────────
 
     function buildControls(totalPages) {
         const template = $("#controls-template").html();
@@ -402,7 +480,7 @@ $(document).ready(function () {
     }
 
     function applyLayout() {
-        const grids = $("#resultsGrid, #actionMovies, #horrorMovies, #favoritesList, #watchlistList");
+        const grids = $("#resultsGrid, #discoverGrid, #actionMovies, #horrorMovies, #favoritesList, #watchlistList");
         if (layout === "list") grids.addClass("list-view");
         else grids.removeClass("list-view");
     }
