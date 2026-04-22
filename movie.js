@@ -1,4 +1,7 @@
 $(document).ready(function () {
+
+
+                    // THIS PART IS THE API SETUP AND GLOBAL STATE
     const API_KEY  = "4ecce31518d3c79af6da91dc53d038d5";
     const IMG_SM   = "https://image.tmdb.org/t/p/w200";
     const IMG_MD   = "https://image.tmdb.org/t/p/w342";
@@ -15,7 +18,8 @@ $(document).ready(function () {
     let accountId         = localStorage.getItem("tmdb_account_id") || null;
     let username          = localStorage.getItem("tmdb_username")   || null;
 
-    // All TMDB genres
+
+                    // THIS PART IS THE LIST OF ALL TMDB GENRES
     const GENRES = [
         { id: 28,    name: "Action"      },
         { id: 12,    name: "Adventure"   },
@@ -34,8 +38,8 @@ $(document).ready(function () {
         { id: 878,   name: "Sci-Fi"      }
     ];
 
-    // ── STORAGE ──────────────────────────────────────────────────
 
+                    // THIS PART IS LOCAL STORAGE — SAVING AND READING FAVORITES/WATCHLIST
     function getList(key)       { return JSON.parse(localStorage.getItem(key) || "[]"); }
     function saveList(key, arr) { localStorage.setItem(key, JSON.stringify(arr)); }
     function isInList(key, id)  { return getList(key).some(m => m.id === id); }
@@ -52,8 +56,8 @@ $(document).ready(function () {
         addToList(key, movie); return true;
     }
 
-    // ── AUTH UI ───────────────────────────────────────────────────
 
+                    // THIS PART IS THE LOGIN/LOGOUT UI AND TMDB AUTHENTICATION FLOW
     function updateAuthUI() {
         if (sessionId && username) {
             $("#authArea").hide();
@@ -143,8 +147,8 @@ $(document).ready(function () {
         updateAuthUI();
     });
 
-    // ── VIEW SWITCHING ────────────────────────────────────────────
 
+                    // THIS PART IS VIEW SWITCHING — SHOWS/HIDES THE MAIN SECTIONS
     function showView(view) {
         $("#searchView, #discoverView, #collectionView, #listsView").hide();
         $(view).show();
@@ -179,7 +183,6 @@ $(document).ready(function () {
         renderListsView("favorites");
     });
 
-    // Sort change re-runs discover
     $("#sortSelect").change(function () {
         discoverPage = 1;
         loadDiscover();
@@ -187,8 +190,8 @@ $(document).ready(function () {
 
     showView("#searchView");
 
-    // ── GENRE CHIPS ───────────────────────────────────────────────
 
+                    // THIS PART IS THE GENRE CHIP BUTTONS IN THE DISCOVER VIEW
     function buildGenreChips() {
         if ($("#genreChips").children().length) return;
         GENRES.forEach(function (g) {
@@ -205,8 +208,8 @@ $(document).ready(function () {
         loadDiscover();
     });
 
-    // ── DISCOVER / GENRE FILTER ───────────────────────────────────
 
+                    // THIS PART IS THE DISCOVER VIEW — FETCHES AND DISPLAYS FILTERED MOVIES
     function loadDiscover() {
         const params = {
             api_key:           API_KEY,
@@ -242,8 +245,8 @@ $(document).ready(function () {
         applyLayout();
     }
 
-    // ── LISTS TABS ────────────────────────────────────────────────
 
+                    // THIS PART IS THE MY LISTS VIEW — FAVORITES AND WATCHLIST TABS
     $(document).on("click", ".list-tab", function () {
         $(".list-tab").removeClass("active");
         $(this).addClass("active");
@@ -275,8 +278,8 @@ $(document).ready(function () {
         }));
     }
 
-    // ── COLLECTIONS ───────────────────────────────────────────────
 
+                    // THIS PART IS THE COLLECTIONS VIEW — TOP RATED AND MOST POPULAR
     function loadTopRated(container) {
         $.get(BASE + "/movie/top_rated", { api_key: API_KEY, page: 1 })
             .done(data => renderMovies(data.results, container));
@@ -287,8 +290,8 @@ $(document).ready(function () {
             .done(data => renderMovies(data.results, container));
     }
 
-    // ── SEARCH ────────────────────────────────────────────────────
 
+                    // THIS PART IS THE SEARCH — FETCHES RESULTS BY QUERY
     function searchMovies() {
         $.get(BASE + "/search/movie", { api_key: API_KEY, query: currentQuery, page: currentPage })
             .done(data => {
@@ -297,8 +300,8 @@ $(document).ready(function () {
             });
     }
 
-    // ── FORMAT ────────────────────────────────────────────────────
 
+                    // THIS PART IS DATA FORMATTING — SHAPES API RESPONSES INTO USABLE OBJECTS
     function formatSingle(m) {
         return {
             id: m.id,
@@ -321,8 +324,8 @@ $(document).ready(function () {
         }));
     }
 
-    // ── RENDER GRID ───────────────────────────────────────────────
 
+                    // THIS PART IS RENDERING — PUTS MOVIE CARDS INTO THE GRID
     function renderMovies(movies, container) {
         const template = $("#movie-template").html();
         const html = Mustache.render(template, { movies: formatMovies(movies.slice(0, 20)) });
@@ -330,8 +333,8 @@ $(document).ready(function () {
         applyLayout();
     }
 
-    // ── SHOW DETAILS + CAST ───────────────────────────────────────
 
+                    // THIS PART IS THE DETAILS PANEL — SHOWS MOVIE INFO AND CAST ON THE RIGHT
     function showDetails(movie) {
         const id = movie.id;
         const data = {
@@ -383,8 +386,8 @@ $(document).ready(function () {
             });
     }
 
-    // ── CLICK HANDLERS ────────────────────────────────────────────
 
+                    // THIS PART IS CLICK HANDLING — CARD CLICKS, FAVORITE, AND WATCHLIST TOGGLES
     $(document).on("click", ".movie-card", function (e) {
         if ($(e.target).is(".fav-btn, .watch-btn")) return;
         const id = $(this).data("id");
@@ -413,8 +416,8 @@ $(document).ready(function () {
         });
     }
 
-    // ── TRENDING CAROUSEL ─────────────────────────────────────────
 
+                    // THIS PART IS THE TRENDING CAROUSEL AT THE TOP OF THE PAGE
     function loadTrending() {
         $.get(BASE + "/trending/movie/week", { api_key: API_KEY })
             .done(function (data) {
@@ -451,7 +454,8 @@ $(document).ready(function () {
 
     loadTrending();
 
-    // Drag-to-scroll
+
+                    // THIS PART IS DRAG-TO-SCROLL ON THE CAROUSEL
     const $track = $("#carouselTrack");
     let isDragging = false, dragStartX = 0, scrollStart = 0;
 
@@ -467,8 +471,8 @@ $(document).ready(function () {
         if (isDragging) { isDragging = false; $track.removeClass("dragging"); }
     });
 
-    // ── SEARCH PAGINATION / LAYOUT ────────────────────────────────
 
+                    // THIS PART IS PAGINATION AND GRID/LIST LAYOUT TOGGLE FOR SEARCH RESULTS
     function buildControls(totalPages) {
         const template = $("#controls-template").html();
         const pages = [];
