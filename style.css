@@ -160,6 +160,16 @@ header h1 {
   background: white;
   padding: 15px;
   border: 1px solid #ddd;
+  text-align: center;
+}
+
+.movie-details img {
+  display: block;
+  margin: 0 auto 10px;
+}
+
+.detail-actions {
+  justify-content: center;
 }
 
 /* ── BUTTONS ────────────────────────────────────────────────── */
@@ -280,6 +290,7 @@ button.active {
   gap: 8px;
   margin-top: 12px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .detail-actions .fav-btn,
