@@ -38,9 +38,11 @@
     <div class="modal-backdrop" id="modalBackdrop"></div>
     <div class="modal-box">
         <h2>Login with TMDB</h2>
+        <p>Click below to authenticate with your TMDB account.</p>
         <button id="startAuthBtn" class="btn-primary">Open TMDB Login</button>
         <hr>
-        <input type="text" id="tokenInput" placeholder="After approving, paste your request token here">
+        <p class="modal-note">After approving, paste your request token here:</p>
+        <input type="text" id="tokenInput" placeholder="Paste approved request token...">
         <button id="confirmTokenBtn" class="btn-primary">Confirm &amp; Login</button>
         <button id="cancelAuthBtn" class="btn-ghost">Cancel</button>
         <div id="authError" class="error-msg"></div>
@@ -50,7 +52,7 @@
 <!-- TRENDING CAROUSEL -->
 <section id="trendingSection">
     <div class="trending-header">
-        <h2> Trending This Week</h2>
+        <h2>🔥 Trending This Week</h2>
         <span class="carousel-hint">drag to scroll</span>
     </div>
     <div class="carousel-track-wrapper">
