@@ -1,4 +1,4 @@
-/* ── RESET & BASE ─────────────────────────────────────────── */
+/* THIS PART IS THE RESET AND BASE STYLES */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -22,7 +22,8 @@ body {
   min-height: 100vh;
 }
 
-/* ── HEADER ───────────────────────────────────────────────── */
+
+                    /* THIS PART IS THE STICKY HEADER AT THE TOP */
 header {
   display: flex;
   align-items: center;
@@ -81,7 +82,8 @@ header h1 {
   font-weight: 600;
 }
 
-/* ── BUTTONS ──────────────────────────────────────────────── */
+
+                    /* THIS PART IS THE GLOBAL BUTTON STYLES */
 button {
   font-family: inherit;
   font-size: 13px;
@@ -100,7 +102,8 @@ button {
 
 button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-/* ── AUTH MODAL ───────────────────────────────────────────── */
+
+                    /* THIS PART IS THE LOGIN MODAL */
 #authModal {
   position: fixed; inset: 0; z-index: 1000;
   display: flex; align-items: center; justify-content: center;
@@ -131,7 +134,8 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
 .modal-box .btn-primary, .modal-box .btn-ghost { margin-right: 8px; }
 .error-msg { margin-top: 10px; font-size: 13px; min-height: 18px; }
 
-/* ── TRENDING CAROUSEL ────────────────────────────────────── */
+
+                    /* THIS PART IS THE TRENDING CAROUSEL SECTION */
 #trendingSection {
   width: 100%; padding: 20px 24px 0;
   background: var(--surface); border-bottom: 1px solid var(--border);
@@ -162,7 +166,8 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
 .carousel-track::-webkit-scrollbar-thumb:hover { background: #888; }
 .carousel-track.dragging { cursor: grabbing; scroll-behavior: auto; }
 
-/* ── CAROUSEL CARDS ───────────────────────────────────────── */
+
+                    /* THIS PART IS THE INDIVIDUAL CARDS INSIDE THE CAROUSEL */
 .carousel-card {
   flex: 0 0 160px; width: 160px;
   border-radius: var(--radius); overflow: hidden; cursor: pointer;
@@ -190,12 +195,12 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
 }
 .carousel-card .card-rating { font-size: 11px; color: var(--text-muted); }
 
-/* ── MAIN LAYOUT ──────────────────────────────────────────── */
+
+                    /* THIS PART IS THE MAIN TWO-COLUMN PAGE LAYOUT */
 .container { display: flex; gap: 0; width: 100%; align-items: flex-start; }
 
 .left-column { flex: 1; min-width: 0; padding: 24px; }
 
-/* CHANGED: widened from 380px to 480px for more breathing room */
 .right-column {
   width: 480px;
   flex-shrink: 0;
@@ -208,7 +213,8 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
   border-left: 1px solid var(--border);
 }
 
-/* ── MOVIE DETAILS PANEL ──────────────────────────────────── */
+
+                    /* THIS PART IS THE MOVIE DETAILS PANEL ON THE RIGHT */
 .movie-details { padding: 24px; text-align: center; }
 
 .movie-details h2 {
@@ -247,7 +253,8 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
   flex: 1; padding: 9px 10px; font-size: 13px; font-weight: 600; border-radius: var(--radius);
 }
 
-/* ── CAST SECTION ─────────────────────────────────────────── */
+
+                    /* THIS PART IS THE CAST AND DIRECTOR SECTION IN THE DETAILS PANEL */
 .cast-section {
   margin-top: 20px; padding-top: 16px;
   border-top: 1px solid var(--border); text-align: left;
@@ -262,12 +269,11 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
   color: var(--text-muted); margin-bottom: 12px;
 }
 
-/* CHANGED: 3 equal columns, no overflow, fixed image height */
 .cast-list {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-  overflow: hidden; /* no horizontal scroll ever */
+  overflow: hidden;
 }
 
 .cast-card { text-align: center; }
@@ -293,7 +299,8 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;
 }
 
-/* ── GENRE CHIPS ──────────────────────────────────────────── */
+
+                    /* THIS PART IS THE GENRE FILTER CHIPS IN THE DISCOVER VIEW */
 .genre-chips {
   display: flex;
   flex-wrap: wrap;
@@ -325,7 +332,8 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
   color: #fff;
 }
 
-/* ── DISCOVER SORT ────────────────────────────────────────── */
+
+                    /* THIS PART IS THE SORT DROPDOWN IN THE DISCOVER VIEW */
 .discover-sort {
   display: flex;
   align-items: center;
@@ -353,7 +361,8 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
 
 .discover-sort select:focus { border-color: var(--accent); }
 
-/* ── CONTENT SECTIONS ─────────────────────────────────────── */
+
+                    /* THIS PART IS THE CONTENT SECTION AND TITLE STYLES */
 .content-section { margin-bottom: 32px; }
 
 .section-title {
@@ -362,14 +371,16 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
   border-bottom: 2px solid var(--accent); display: inline-block;
 }
 
-/* ── MOVIE GRID ───────────────────────────────────────────── */
+
+                    /* THIS PART IS THE MOVIE CARD GRID */
 .movie-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 16px;
 }
 
-/* ── MOVIE CARDS ──────────────────────────────────────────── */
+
+                    /* THIS PART IS THE INDIVIDUAL MOVIE CARDS AND THEIR HOVER OVERLAYS */
 .movie-card {
   border-radius: var(--radius); overflow: hidden;
   cursor: pointer; background: var(--surface2);
@@ -397,7 +408,8 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
 }
 .card-rating { font-size: 12px; color: var(--text-muted); }
 
-/* ── FAV / WATCH BUTTONS ──────────────────────────────────── */
+
+                    /* THIS PART IS THE FAVORITE AND WATCHLIST BUTTONS ON CARDS */
 .fav-btn, .watch-btn {
   padding: 6px 10px; font-size: 13px; border-radius: var(--radius);
   border: none; cursor: pointer; font-weight: 600; transition: all 0.15s;
@@ -407,14 +419,16 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
 .watch-btn { background: rgba(255,255,255,0.15); color: #fff; backdrop-filter: blur(4px); }
 .watch-btn:hover, .watch-btn.active { background: var(--watch); color: #fff; }
 
-/* ── LIST VIEW ────────────────────────────────────────────── */
+
+                    /* THIS PART IS THE LIST VIEW LAYOUT FOR MOVIE CARDS */
 .movie-grid.list-view { display: flex; flex-direction: column; gap: 10px; }
 .movie-grid.list-view .movie-card { display: flex; flex-direction: row; height: 90px; }
 .movie-grid.list-view .card-poster { width: 60px; flex-shrink: 0; aspect-ratio: unset; height: 90px; }
 .movie-grid.list-view .card-info { display: flex; flex-direction: column; justify-content: center; flex: 1; }
 .movie-grid.list-view .card-title { white-space: normal; }
 
-/* ── CONTROLS / PAGINATION ────────────────────────────────── */
+
+                    /* THIS PART IS THE PAGINATION AND GRID/LIST TOGGLE CONTROLS */
 .controls-wrapper {
   display: flex; justify-content: space-between;
   align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
@@ -430,7 +444,8 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
 .view-toggle button { background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
 .view-toggle button:hover { border-color: var(--accent); color: var(--accent); }
 
-/* ── LISTS TABS ───────────────────────────────────────────── */
+
+                    /* THIS PART IS THE FAVORITES AND WATCHLIST TABS IN MY LISTS */
 .lists-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
 .list-tab {
   background: var(--surface2); border: 1px solid var(--border);
@@ -441,13 +456,15 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
 
 .empty-msg { color: var(--text-muted); font-size: 14px; padding: 30px 0; }
 
-/* ── SCROLLBAR (global) ───────────────────────────────────── */
+
+                    /* THIS PART IS THE CUSTOM SCROLLBAR STYLING */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: #444; border-radius: 6px; }
 ::-webkit-scrollbar-thumb:hover { background: #666; }
 
-/* ── RESPONSIVE ───────────────────────────────────────────── */
+
+                    /* THIS PART IS THE RESPONSIVE BREAKPOINTS FOR SMALLER SCREENS */
 @media (max-width: 1200px) {
   .right-column { width: 380px; }
 }
