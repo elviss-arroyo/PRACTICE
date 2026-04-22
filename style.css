@@ -358,6 +358,118 @@ button.active {
   margin-left: auto;
 }
 
+/* ── TRENDING CAROUSEL ──────────────────────────────────────── */
+
+#trendingSection {
+  max-width: 1300px;
+  margin: 24px auto 0;
+  padding: 0 20px;
+}
+
+.trending-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.trending-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.carousel-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.carousel-controls button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #ccc;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-controls button:hover {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.carousel-track-wrapper {
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 8px;
+  /* Hide scrollbar visually */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-card {
+  flex: 0 0 140px;
+  width: 140px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.carousel-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.14);
+}
+
+.carousel-card img {
+  width: 100%;
+  display: block;
+}
+
+.carousel-card-info {
+  padding: 6px 8px 2px;
+}
+
+.carousel-title {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.carousel-rating {
+  font-size: 11px;
+  color: #888;
+}
+
+.carousel-card .card-actions {
+  padding: 4px 6px 8px;
+  justify-content: center;
+}
+
 /* ── RESPONSIVE ─────────────────────────────────────────────── */
 
 @media (max-width: 900px) {
