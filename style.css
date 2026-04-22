@@ -8,8 +8,8 @@
   --border:    #333;
   --text:      #e8e8e8;
   --text-muted:#999;
-  --accent:    #f47521;
-  --accent2:   #e05a00;
+  --accent:    #2563eb;
+  --accent2:   #1d4ed8;
   --fav:       #e74c3c;
   --watch:     #27ae60;
   --radius:    6px;
@@ -228,8 +228,10 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
 .detail-meta {
   display: flex; flex-direction: column;
   gap: 5px; font-size: 13px; color: var(--text-muted); margin-bottom: 12px;
+  text-align: left;
 }
 .detail-meta span { display: block; }
+.meta-label { color: var(--text); font-weight: 600; }
 
 .detail-overview {
   font-size: 13px; line-height: 1.6;
@@ -272,9 +274,10 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
 
 .cast-card img {
   width: 100%;
-  height: 120px;       /* fixed height — no layout shift */
+  aspect-ratio: 2/3;
+  height: auto;
   object-fit: cover;
-  object-position: top; /* favour faces */
+  object-position: center center;
   border-radius: 4px;
   display: block;
   background: var(--surface2);
