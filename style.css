@@ -21,20 +21,44 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 30px;
+  padding: 12px 24px;
   background: #fff;
   border-bottom: 1px solid #ddd;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 header h1 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.header-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.header-search #searchInput {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 #usernameDisplay {
@@ -128,7 +152,7 @@ header h1 {
 .right-column {
   flex: 1;
   position: sticky;
-  top: 20px;
+  top: 62px;
   align-self: flex-start;
 }
 
@@ -136,23 +160,6 @@ header h1 {
   background: white;
   padding: 15px;
   border: 1px solid #ddd;
-}
-
-/* ── SEARCH ─────────────────────────────────────────────────── */
-
-.search-section {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 15px;
-  flex-wrap: wrap;
-}
-
-#searchInput {
-  padding: 8px;
-  border: 1px solid #ccc;
-  flex: 1;
-  min-width: 160px;
 }
 
 /* ── BUTTONS ────────────────────────────────────────────────── */
@@ -514,9 +521,15 @@ button.active {
 
 @media (max-width: 600px) {
   header {
-    flex-direction: column;
-    gap: 10px;
-    text-align: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 14px;
+  }
+
+  .header-search {
+    order: 3;
+    width: 100%;
+    flex-wrap: wrap;
   }
 
   #resultsGrid,
