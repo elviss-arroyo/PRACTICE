@@ -31,7 +31,7 @@ $(document).ready(function () {
         { id: 10402, name: "Music"       },
         { id: 9648,  name: "Mystery"     },
         { id: 10749, name: "Romance"     },
-        { id: 878,   name: "Sci-Fi"      },
+        { id: 878,   name: "Sci-Fi"      }
     ];
 
     // ── STORAGE ──────────────────────────────────────────────────
@@ -58,7 +58,7 @@ $(document).ready(function () {
         if (sessionId && username) {
             $("#authArea").hide();
             $("#userArea").show();
-            $("#usernameDisplay").text(username);
+            $("#usernameDisplay").text("👤 " + username);
         } else {
             $("#authArea").show();
             $("#userArea").hide();
@@ -368,7 +368,7 @@ $(document).ready(function () {
 
                 let castHTML = '<div class="cast-section">';
                 if (director) {
-                    castHTML += `<p class="director-line">🎬 <b>Director:</b> ${$('<div>').text(director.name).html()}</p>`;
+                    castHTML += `<p class="director-line"><b>Director:</b> ${$('<div>').text(director.name).html()}</p>`;
                 }
                 castHTML += '<h4>Cast</h4><div class="cast-list">';
 
