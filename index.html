@@ -8,22 +8,50 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
 </head>
+
 <body>
 
 <header>
     <h1>TMDB Movie Browser</h1>
+    <div class="header-actions">
+        <div id="authArea">
+            <button id="loginBtn">⚙ Login with TMDB</button>
+        </div>
+        <div id="userArea" style="display:none;">
+            <span id="usernameDisplay"></span>
+            <button id="logoutBtn">Logout</button>
+        </div>
+    </div>
 </header>
 
+<!-- Auth Modal -->
+<div id="authModal" style="display:none;">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-box">
+        <h2>Login with TMDB</h2>
+        <p>Click below to authenticate with your TMDB account. You'll be redirected to TMDB and then returned here.</p>
+        <button id="startAuthBtn">Open TMDB Login</button>
+        <hr>
+        <p class="modal-note">After approving, paste your approved request token here:</p>
+        <input type="text" id="tokenInput" placeholder="Paste approved request token...">
+        <button id="confirmTokenBtn">Confirm &amp; Login</button>
+        <button id="cancelAuthBtn" class="btn-secondary">Cancel</button>
+        <div id="authError" class="error-msg"></div>
+    </div>
+</div>
+
 <main class="container">
+
     <div class="left-column">
+
         <section class="search-section">
             <input type="text" id="searchInput" placeholder="Search movies...">
             <button id="searchBtn">Search</button>
             <button id="collectionBtn">Collections</button>
-            <button id="watchlistBtn">My Watchlist</button>
-            <button id="loginBtn" class="auth-btn">TMDB Login</button>
+            <button id="listsBtn">My Lists</button>
         </section>
 
+        <!-- Search View -->
         <div id="searchView">
             <section class="search-results">
                 <h2>Search Results</h2>
@@ -32,6 +60,7 @@
             </section>
         </div>
 
+        <!-- Collections View -->
         <div id="collectionView" style="display:none;">
             <section class="categories">
                 <h2>Action Movies</h2>
@@ -43,12 +72,28 @@
             </section>
         </div>
 
-        <div id="watchlistView" style="display:none;">
-            <section class="categories">
-                <h2>My Watchlist</h2>
-                <div id="watchlistGrid" class="category-grid"></div>
+        <!-- My Lists View -->
+        <div id="listsView" style="display:none;">
+            <section class="lists-section">
+                <div class="lists-tabs">
+                    <button class="list-tab active" data-list="favorites">❤ Favorites</button>
+                    <button class="list-tab" data-list="watchlist">🎬 Watchlist</button>
+                </div>
+
+                <div id="favoritesPanel" class="list-panel">
+                    <h2>❤ Favorites</h2>
+                    <div id="favoritesList" class="list-grid"></div>
+                    <p class="empty-msg" id="favEmpty" style="display:none;">No favorites yet. Click the ❤ on any movie!</p>
+                </div>
+
+                <div id="watchlistPanel" class="list-panel" style="display:none;">
+                    <h2>🎬 Watchlist</h2>
+                    <div id="watchlistList" class="list-grid"></div>
+                    <p class="empty-msg" id="watchEmpty" style="display:none;">Your watchlist is empty. Click 🎬 on any movie!</p>
+                </div>
             </section>
         </div>
+
     </div>
 
     <div class="right-column">
@@ -59,39 +104,48 @@
             </div>
         </div>
     </div>
+
 </main>
 
+<!-- Movie Card Template -->
 <script id="movie-template" type="text/template">
-    {{#movies}} 
+    {{#movies}}
     <div class="movie-card" data-id="{{id}}">
-        <img src="{{poster}}" alt="{{title}}"> 
+        <img src="{{poster}}" alt="{{title}}">
         <p>{{title}}</p>
+        <div class="card-actions">
+            <button class="fav-btn {{favClass}}" data-id="{{id}}" title="Favorite">❤</button>
+            <button class="watch-btn {{watchClass}}" data-id="{{id}}" title="Watchlist">🎬</button>
+        </div>
     </div>
     {{/movies}}
 </script>
 
+<!-- Details Template -->
 <script id="details-template" type="text/template">
     <img src="{{poster}}" alt="{{title}}">
     <h3>{{title}}</h3>
-    <button class="watchlist-toggle-btn" data-id="{{id}}" data-title="{{title}}" data-poster="{{poster_path}}">
-        Toggle Watchlist
-    </button>
     <p><b>Release:</b> {{release_date}}</p>
     <p><b>Rating:</b> {{vote_average}}</p>
     <p><b>Language:</b> {{language}}</p>
     <p>{{overview}}</p>
+    <div class="detail-actions">
+        <button class="fav-btn {{favClass}}" data-id="{{id}}" title="Favorite">❤ {{favLabel}}</button>
+        <button class="watch-btn {{watchClass}}" data-id="{{id}}" title="Watchlist">🎬 {{watchLabel}}</button>
+    </div>
 </script>
 
+<!-- Controls Template -->
 <script id="controls-template" type="text/template">
     <div class="controls-wrapper">
-        <div class="pagination"> 
+        <div class="pagination">
             {{#pages}}
             <button class="page-btn {{active}}" data-page="{{number}}">{{number}}</button>
             {{/pages}}
         </div>
         <div class="view-toggle">
-            <button id="gridBtn">Grid</button> 
-            <button id="listBtn">List</button> 
+            <button id="gridBtn">Grid</button>
+            <button id="listBtn">List</button>
         </div>
     </div>
 </script>
