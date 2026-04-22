@@ -1,468 +1,499 @@
-/* ── RESET & BASE ─────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg:        #121212;
-  --surface:   #1c1c1c;
-  --surface2:  #252525;
-  --border:    #333;
-  --text:      #e8e8e8;
-  --text-muted:#999;
-  --accent:    #2563eb;
-  --accent2:   #1d4ed8;
-  --fav:       #e74c3c;
-  --watch:     #27ae60;
-  --radius:    6px;
-}
-
-body {
-  font-family: 'Inter', Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-}
-
-/* ── HEADER ───────────────────────────────────────────────── */
-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 0 24px;
-  height: 60px;
-  background: #0d0d0d;
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 200;
-}
-
-header h1 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  white-space: nowrap;
-  color: var(--accent);
-  flex-shrink: 0;
-}
-
-.header-search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 2;
-  min-width: 0;
-}
-
-.header-search #searchInput {
-  flex: 1;
-  min-width: 0;
-  padding: 8px 14px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  color: var(--text);
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.header-search #searchInput:focus { border-color: var(--accent); }
-.header-search #searchInput::placeholder { color: var(--text-muted); }
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
-#usernameDisplay {
-  font-size: 14px;
-  color: var(--accent);
-  font-weight: 600;
-}
-
-/* ── BUTTONS ──────────────────────────────────────────────── */
-button {
-  font-family: inherit;
-  font-size: 13px;
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: all 0.18s;
-  border: none;
-  padding: 7px 14px;
-}
-
-.btn-primary { background: var(--accent); color: #fff; font-weight: 600; }
-.btn-primary:hover { background: var(--accent2); }
-
-.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
-.btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
-
-button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-/* ── AUTH MODAL ───────────────────────────────────────────── */
-#authModal {
-  position: fixed; inset: 0; z-index: 1000;
-  display: flex; align-items: center; justify-content: center;
-}
-
-.modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.75); }
-
-.modal-box {
-  position: relative; z-index: 1;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 30px;
-  max-width: 420px; width: 90%;
-  box-shadow: 0 16px 48px rgba(0,0,0,0.6); color: var(--text);
-}
-
-.modal-box h2 { margin-bottom: 10px; }
-.modal-box p  { color: var(--text-muted); font-size: 14px; margin-bottom: 14px; }
-.modal-box hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
-.modal-note   { font-size: 13px; margin-bottom: 8px; }
-
-.modal-box input[type="text"] {
-  width: 100%; padding: 9px 12px;
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: var(--radius); color: var(--text);
-  font-size: 13px; margin-bottom: 10px; outline: none;
-}
-.modal-box input[type="text"]:focus { border-color: var(--accent); }
-.modal-box .btn-primary, .modal-box .btn-ghost { margin-right: 8px; }
-.error-msg { margin-top: 10px; font-size: 13px; min-height: 18px; }
-
-/* ── TRENDING CAROUSEL ────────────────────────────────────── */
-#trendingSection {
-  width: 100%; padding: 20px 24px 0;
-  background: var(--surface); border-bottom: 1px solid var(--border);
-}
-
-.trending-header {
-  display: flex; align-items: center;
-  justify-content: space-between; margin-bottom: 14px;
-}
-
-.trending-header h2 { font-size: 1.1rem; font-weight: 700; color: var(--text); }
-
-.carousel-hint {
-  font-size: 11px; color: var(--text-muted);
-  letter-spacing: 0.05em; text-transform: uppercase;
-}
-
-.carousel-track-wrapper { overflow: hidden; background: #1a1a1a; }
-
-.carousel-track {
-  display: flex; gap: 12px; overflow-x: auto;
-  padding-bottom: 16px; cursor: grab; user-select: none;
-  scrollbar-width: thick; scrollbar-color: #555 #1a1a1a;
-}
-.carousel-track::-webkit-scrollbar { height: 8px; }
-.carousel-track::-webkit-scrollbar-track { background: #1a1a1a; }
-.carousel-track::-webkit-scrollbar-thumb { background: #555; border-radius: 8px; min-width: 60px; }
-.carousel-track::-webkit-scrollbar-thumb:hover { background: #888; }
-.carousel-track.dragging { cursor: grabbing; scroll-behavior: auto; }
-
-/* ── CAROUSEL CARDS ───────────────────────────────────────── */
-.carousel-card {
-  flex: 0 0 160px; width: 160px;
-  border-radius: var(--radius); overflow: hidden; cursor: pointer;
-  background: var(--surface2); opacity: 0; transform: translateY(10px);
-  transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.2s;
-  border: none; text-align: left;
-}
-.carousel-card.show { opacity: 1; transform: translateY(0); }
-.carousel-card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 10px 30px rgba(0,0,0,0.6); z-index: 2; }
-
-.carousel-card .card-poster { position: relative; aspect-ratio: 2/3; overflow: hidden; }
-.carousel-card .card-poster img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
-
-.carousel-card .card-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
-  display: flex; align-items: flex-end; justify-content: flex-end;
-  gap: 6px; padding: 8px; opacity: 0; transition: opacity 0.2s;
-}
-.carousel-card:hover .card-overlay { opacity: 1; }
-.carousel-card .card-info { padding: 8px 8px 10px; }
-.carousel-card .card-title {
-  font-size: 12px; font-weight: 600; color: var(--text);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px;
-}
-.carousel-card .card-rating { font-size: 11px; color: var(--text-muted); }
-
-/* ── MAIN LAYOUT ──────────────────────────────────────────── */
-.container { display: flex; gap: 0; width: 100%; align-items: flex-start; }
-
-.left-column { flex: 1; min-width: 0; padding: 24px; }
-
-/* CHANGED: widened from 380px to 480px for more breathing room */
-.right-column {
-  width: 480px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 60px;
-  align-self: flex-start;
-  height: calc(100vh - 60px);
-  overflow-y: auto;
-  background: var(--surface);
-  border-left: 1px solid var(--border);
-}
-
-/* ── MOVIE DETAILS PANEL ──────────────────────────────────── */
-.movie-details { padding: 24px; text-align: center; }
-
-.movie-details h2 {
-  font-size: 0.85rem; font-weight: 700;
-  color: var(--text-muted); text-transform: uppercase;
-  letter-spacing: 0.08em; margin-bottom: 16px;
-  padding-bottom: 12px; border-bottom: 1px solid var(--border);
-}
-
-.placeholder-msg { color: var(--text-muted); font-size: 14px; padding: 30px 0; }
-
-.detail-poster-wrap { width: 100%; margin-bottom: 14px; }
-.detail-poster-wrap img { width: 100%; border-radius: var(--radius); display: block; }
-
-.movie-details h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
-
-.detail-meta {
-  display: flex; flex-direction: column;
-  gap: 5px; font-size: 13px; color: var(--text-muted); margin-bottom: 12px;
-  text-align: left;
-}
-.detail-meta span { display: block; }
-.meta-label { color: var(--text); font-weight: 600; }
-
-.detail-overview {
-  font-size: 13px; line-height: 1.6;
-  color: var(--text-muted); margin-bottom: 16px; text-align: left;
-}
-
-.detail-actions {
-  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 4px;
-}
-
-.detail-actions .fav-btn,
-.detail-actions .watch-btn {
-  flex: 1; padding: 9px 10px; font-size: 13px; font-weight: 600; border-radius: var(--radius);
-}
-
-/* ── CAST SECTION ─────────────────────────────────────────── */
-.cast-section {
-  margin-top: 20px; padding-top: 16px;
-  border-top: 1px solid var(--border); text-align: left;
-}
-
-.director-line { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
-.director-line b { color: var(--text); }
-
-.cast-section h4 {
-  font-size: 0.8rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--text-muted); margin-bottom: 12px;
-}
-
-/* CHANGED: 3 equal columns, no overflow, fixed image height */
-.cast-list {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  overflow: hidden; /* no horizontal scroll ever */
-}
-
-.cast-card { text-align: center; }
-
-.cast-card img {
-  width: 100%;
-  height: 160px;       /* taller so full face fits */
-  object-fit: cover;
-  object-position: center 15%; /* slight upward bias to capture full head */
-  border-radius: 4px;
-  display: block;
-  background: var(--surface2);
-}
-
-.cast-name {
-  font-size: 11px; font-weight: 600; color: var(--text);
-  margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-
-.cast-char {
-  font-size: 10px; color: var(--text-muted);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;
-}
-
-/* ── GENRE CHIPS ──────────────────────────────────────────── */
-.genre-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.genre-chip {
-  padding: 6px 16px;
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.genre-chip:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--surface2);
-}
-
-.genre-chip.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-
-/* ── DISCOVER SORT ────────────────────────────────────────── */
-.discover-sort {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.discover-sort label {
-  font-size: 13px;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-.discover-sort select {
-  padding: 7px 12px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text);
-  font-size: 13px;
-  font-family: inherit;
-  cursor: pointer;
-  outline: none;
-}
-
-.discover-sort select:focus { border-color: var(--accent); }
-
-/* ── CONTENT SECTIONS ─────────────────────────────────────── */
-.content-section { margin-bottom: 32px; }
-
-.section-title {
-  font-size: 1.1rem; font-weight: 700;
-  margin-bottom: 16px; padding-bottom: 8px;
-  border-bottom: 2px solid var(--accent); display: inline-block;
-}
-
-/* ── MOVIE GRID ───────────────────────────────────────────── */
-.movie-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
-}
-
-/* ── MOVIE CARDS ──────────────────────────────────────────── */
-.movie-card {
-  border-radius: var(--radius); overflow: hidden;
-  cursor: pointer; background: var(--surface2);
-  transition: transform 0.2s, box-shadow 0.2s;
-  border: 1px solid var(--border);
-}
-.movie-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
-
-.card-poster { position: relative; aspect-ratio: 2/3; overflow: hidden; }
-.card-poster img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
-.movie-card:hover .card-poster img { transform: scale(1.05); }
-
-.card-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 50%, transparent 100%);
-  display: flex; align-items: flex-end; justify-content: center;
-  gap: 10px; padding: 12px; opacity: 0; transition: opacity 0.2s;
-}
-.movie-card:hover .card-overlay { opacity: 1; }
-
-.card-info { padding: 8px 10px 10px; }
-.card-title {
-  font-size: 13px; font-weight: 600; color: var(--text);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px;
-}
-.card-rating { font-size: 12px; color: var(--text-muted); }
-
-/* ── FAV / WATCH BUTTONS ──────────────────────────────────── */
-.fav-btn, .watch-btn {
-  padding: 6px 10px; font-size: 13px; border-radius: var(--radius);
-  border: none; cursor: pointer; font-weight: 600; transition: all 0.15s;
-}
-.fav-btn { background: rgba(255,255,255,0.15); color: #fff; backdrop-filter: blur(4px); }
-.fav-btn:hover, .fav-btn.active { background: var(--fav); color: #fff; }
-.watch-btn { background: rgba(255,255,255,0.15); color: #fff; backdrop-filter: blur(4px); }
-.watch-btn:hover, .watch-btn.active { background: var(--watch); color: #fff; }
-
-/* ── LIST VIEW ────────────────────────────────────────────── */
-.movie-grid.list-view { display: flex; flex-direction: column; gap: 10px; }
-.movie-grid.list-view .movie-card { display: flex; flex-direction: row; height: 90px; }
-.movie-grid.list-view .card-poster { width: 60px; flex-shrink: 0; aspect-ratio: unset; height: 90px; }
-.movie-grid.list-view .card-info { display: flex; flex-direction: column; justify-content: center; flex: 1; }
-.movie-grid.list-view .card-title { white-space: normal; }
-
-/* ── CONTROLS / PAGINATION ────────────────────────────────── */
-.controls-wrapper {
-  display: flex; justify-content: space-between;
-  align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
-}
-.pagination { display: flex; gap: 6px; }
-.page-btn, .discover-page-btn {
-  background: var(--surface2); border: 1px solid var(--border);
-  color: var(--text); padding: 6px 12px; border-radius: var(--radius);
-}
-.page-btn:hover, .discover-page-btn:hover { border-color: var(--accent); color: var(--accent); }
-.page-btn.active, .discover-page-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-.view-toggle { display: flex; gap: 6px; }
-.view-toggle button { background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
-.view-toggle button:hover { border-color: var(--accent); color: var(--accent); }
-
-/* ── LISTS TABS ───────────────────────────────────────────── */
-.lists-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
-.list-tab {
-  background: var(--surface2); border: 1px solid var(--border);
-  color: var(--text-muted); padding: 8px 20px; border-radius: 20px; font-weight: 600;
-}
-.list-tab:hover { color: var(--text); border-color: #555; }
-.list-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-.empty-msg { color: var(--text-muted); font-size: 14px; padding: 30px 0; }
-
-/* ── SCROLLBAR (global) ───────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: #444; border-radius: 6px; }
-::-webkit-scrollbar-thumb:hover { background: #666; }
-
-/* ── RESPONSIVE ───────────────────────────────────────────── */
-@media (max-width: 1200px) {
-  .right-column { width: 380px; }
-}
-
-@media (max-width: 1000px) {
-  .right-column { width: 320px; }
-}
-
-@media (max-width: 768px) {
-  .container { flex-direction: column; }
-  .right-column { width: 100%; position: static; height: auto; border-left: none; border-top: 1px solid var(--border); }
-  .movie-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
-}
-
-@media (max-width: 600px) {
-  header { flex-wrap: wrap; height: auto; padding: 10px 14px; gap: 8px; }
-  .header-search { order: 3; width: 100%; flex-wrap: wrap; }
-  .movie-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
-}
+$(document).ready(function () {
+    const API_KEY  = "4ecce31518d3c79af6da91dc53d038d5";
+    const IMG_SM   = "https://image.tmdb.org/t/p/w200";
+    const IMG_MD   = "https://image.tmdb.org/t/p/w342";
+    const IMG_LG   = "https://image.tmdb.org/t/p/w500";
+    const IMG_CAST = "https://image.tmdb.org/t/p/w185";
+    const BASE     = "https://api.themoviedb.org/3";
+
+    let currentQuery      = "";
+    let currentPage       = 1;
+    let layout            = "grid";
+    let activeGenreId     = null;
+    let discoverPage      = 1;
+    let sessionId         = localStorage.getItem("tmdb_session_id") || null;
+    let accountId         = localStorage.getItem("tmdb_account_id") || null;
+    let username          = localStorage.getItem("tmdb_username")   || null;
+
+    // All TMDB genres
+    const GENRES = [
+        { id: 28,    name: "Action"      },
+        { id: 12,    name: "Adventure"   },
+        { id: 16,    name: "Animation"   },
+        { id: 35,    name: "Comedy"      },
+        { id: 80,    name: "Crime"       },
+        { id: 99,    name: "Documentary" },
+        { id: 18,    name: "Drama"       },
+        { id: 10751, name: "Family"      },
+        { id: 14,    name: "Fantasy"     },
+        { id: 36,    name: "History"     },
+        { id: 27,    name: "Horror"      },
+        { id: 10402, name: "Music"       },
+        { id: 9648,  name: "Mystery"     },
+        { id: 10749, name: "Romance"     },
+        { id: 878,   name: "Sci-Fi"      }
+    ];
+
+    // ── STORAGE ──────────────────────────────────────────────────
+
+    function getList(key)       { return JSON.parse(localStorage.getItem(key) || "[]"); }
+    function saveList(key, arr) { localStorage.setItem(key, JSON.stringify(arr)); }
+    function isInList(key, id)  { return getList(key).some(m => m.id === id); }
+
+    function addToList(key, movie) {
+        const list = getList(key);
+        if (!list.some(m => m.id === movie.id)) { list.push(movie); saveList(key, list); }
+    }
+
+    function removeFromList(key, id) { saveList(key, getList(key).filter(m => m.id !== id)); }
+
+    function toggleList(key, movie) {
+        if (isInList(key, movie.id)) { removeFromList(key, movie.id); return false; }
+        addToList(key, movie); return true;
+    }
+
+    // ── AUTH UI ───────────────────────────────────────────────────
+
+    function updateAuthUI() {
+        if (sessionId && username) {
+            $("#authArea").hide();
+            $("#userArea").show();
+            $("#usernameDisplay").text("👤 " + username);
+        } else {
+            $("#authArea").show();
+            $("#userArea").hide();
+        }
+    }
+    updateAuthUI();
+
+    $("#loginBtn").click(() => { $("#authModal").show(); $("#authError").text(""); $("#tokenInput").val(""); });
+    $("#cancelAuthBtn, #modalBackdrop").click(() => $("#authModal").hide());
+
+    $("#startAuthBtn").click(function () {
+        $("#authError").text("");
+        $.get(BASE + "/authentication/token/new", { api_key: API_KEY })
+            .done(function (data) {
+                if (data.success) {
+                    $("#tokenInput").val(data.request_token);
+                    window.open("https://www.themoviedb.org/authenticate/" + data.request_token, "_blank");
+                    $("#authError").css("color", "#4caf50").text("✔ Approve on TMDB, then click Confirm.");
+                } else {
+                    $("#authError").css("color", "#e74c3c").text("Failed to get request token.");
+                }
+            })
+            .fail(() => $("#authError").css("color", "#e74c3c").text("Network error."));
+    });
+
+    $("#confirmTokenBtn").click(function () {
+        const token = $("#tokenInput").val().trim();
+        if (!token) { $("#authError").css("color", "#e74c3c").text("Please paste your request token."); return; }
+        $("#authError").css("color", "#999").text("Creating session...");
+
+        $.post(BASE + "/authentication/session/new?api_key=" + API_KEY, { request_token: token })
+            .done(function (data) {
+                if (data.success) {
+                    sessionId = data.session_id;
+                    localStorage.setItem("tmdb_session_id", sessionId);
+                    fetchAccountDetails();
+                } else {
+                    $("#authError").css("color", "#e74c3c").text("Token not approved yet.");
+                }
+            })
+            .fail(() => $("#authError").css("color", "#e74c3c").text("Error. Approve the token on TMDB first."));
+    });
+
+    function fetchAccountDetails() {
+        $.get(BASE + "/account", { api_key: API_KEY, session_id: sessionId })
+            .done(function (data) {
+                accountId = data.id; username = data.username;
+                localStorage.setItem("tmdb_account_id", accountId);
+                localStorage.setItem("tmdb_username", username);
+                updateAuthUI();
+                $("#authModal").hide();
+                syncTMDBLists();
+            })
+            .fail(() => $("#authError").css("color", "#e74c3c").text("Session valid but failed to fetch account."));
+    }
+
+    function syncTMDBLists() {
+        if (!sessionId || !accountId) return;
+        $.get(BASE + "/account/" + accountId + "/favorite/movies", { api_key: API_KEY, session_id: sessionId })
+            .done(data => data.results && data.results.forEach(m => addToList("favorites", formatSingle(m))));
+        $.get(BASE + "/account/" + accountId + "/watchlist/movies", { api_key: API_KEY, session_id: sessionId })
+            .done(data => data.results && data.results.forEach(m => addToList("watchlist", formatSingle(m))));
+    }
+
+    function postToTMDB(listType, mediaId, add) {
+        if (!sessionId || !accountId) return;
+        const body = listType === "favorite"
+            ? { media_type: "movie", media_id: mediaId, favorite: add }
+            : { media_type: "movie", media_id: mediaId, watchlist: add };
+        $.ajax({
+            url: BASE + "/account/" + accountId + "/" + listType + "?api_key=" + API_KEY + "&session_id=" + sessionId,
+            method: "POST", contentType: "application/json", data: JSON.stringify(body)
+        });
+    }
+
+    $("#logoutBtn").click(function () {
+        if (sessionId) {
+            $.ajax({ url: BASE + "/authentication/session?api_key=" + API_KEY, method: "DELETE",
+                contentType: "application/json", data: JSON.stringify({ session_id: sessionId }) });
+        }
+        sessionId = accountId = username = null;
+        ["tmdb_session_id","tmdb_account_id","tmdb_username"].forEach(k => localStorage.removeItem(k));
+        updateAuthUI();
+    });
+
+    // ── VIEW SWITCHING ────────────────────────────────────────────
+
+    function showView(view) {
+        $("#searchView, #discoverView, #collectionView, #listsView").hide();
+        $(view).show();
+    }
+
+    $("#searchBtn").click(function () {
+        currentQuery = $("#searchInput").val().trim();
+        if (!currentQuery) return;
+        currentPage = 1;
+        showView("#searchView");
+        searchMovies();
+    });
+
+    $("#searchInput").keypress(function (e) {
+        if (e.which === 13) $("#searchBtn").trigger("click");
+    });
+
+    $("#discoverBtn").click(function () {
+        showView("#discoverView");
+        buildGenreChips();
+        if (!activeGenreId) loadDiscover();
+    });
+
+    $("#collectionBtn").click(function () {
+        showView("#collectionView");
+        loadCollection(28, "#actionMovies");
+        loadCollection(27, "#horrorMovies");
+    });
+
+    $("#listsBtn").click(function () {
+        showView("#listsView");
+        renderListsView("favorites");
+    });
+
+    // Sort change re-runs discover
+    $("#sortSelect").change(function () {
+        discoverPage = 1;
+        loadDiscover();
+    });
+
+    showView("#searchView");
+
+    // ── GENRE CHIPS ───────────────────────────────────────────────
+
+    function buildGenreChips() {
+        if ($("#genreChips").children().length) return; // already built
+        GENRES.forEach(function (g) {
+            const chip = $(`<button class="genre-chip" data-id="${g.id}">${g.name}</button>`);
+            $("#genreChips").append(chip);
+        });
+    }
+
+    $(document).on("click", ".genre-chip", function () {
+        $(".genre-chip").removeClass("active");
+        $(this).addClass("active");
+        activeGenreId = parseInt($(this).data("id"));
+        discoverPage = 1;
+        loadDiscover();
+    });
+
+    // ── DISCOVER / GENRE FILTER ───────────────────────────────────
+
+    function loadDiscover() {
+        const params = {
+            api_key:           API_KEY,
+            sort_by:           $("#sortSelect").val() || "popularity.desc",
+            page:              discoverPage,
+            "vote_count.gte":  50
+        };
+        if (activeGenreId) params.with_genres = activeGenreId;
+
+        $.get(BASE + "/discover/movie", params)
+            .done(function (data) {
+                renderMovies(data.results, "#discoverGrid");
+                buildDiscoverControls(data.total_pages);
+            });
+    }
+
+    // FIX: closing brace was misplaced in original — button handlers and applyLayout
+    // are now correctly inside buildDiscoverControls, called after HTML is injected.
+    function buildDiscoverControls(totalPages) {
+        const template = $("#discover-controls-template").html();
+        const pages = [];
+        for (let i = 1; i <= Math.min(totalPages, 5); i++)
+            pages.push({ number: i, active: i === discoverPage ? "active" : "" });
+
+        $("#discoverControls").html(Mustache.render(template, { pages }));
+
+        // These bindings must be inside this function so they fire after the
+        // rendered HTML exists in the DOM.
+        $(".discover-page-btn").click(function () {
+            discoverPage = parseInt($(this).data("page"));
+            loadDiscover();
+        });
+
+        $("#discoverGridBtn").click(() => {
+            layout = "grid";
+            applyLayout();
+        });
+
+        $("#discoverListBtn").click(() => {
+            layout = "list";
+            applyLayout();
+        });
+
+        applyLayout();
+    }
+
+    // ── LISTS TABS ────────────────────────────────────────────────
+
+    $(document).on("click", ".list-tab", function () {
+        $(".list-tab").removeClass("active");
+        $(this).addClass("active");
+        renderListsView($(this).data("list"));
+    });
+
+    function renderListsView(which) {
+        if (which === "favorites") {
+            $("#favoritesPanel").show(); $("#watchlistPanel").hide();
+            renderStoredList("favorites", "#favoritesList", "#favEmpty");
+        } else {
+            $("#favoritesPanel").hide(); $("#watchlistPanel").show();
+            renderStoredList("watchlist", "#watchlistList", "#watchEmpty");
+        }
+    }
+
+    function renderStoredList(key, container, emptyMsg) {
+        const items = getList(key);
+        if (!items.length) { $(container).html(""); $(emptyMsg).show(); return; }
+        $(emptyMsg).hide();
+        const template = $("#movie-template").html();
+        $(container).html(Mustache.render(template, {
+            movies: items.map(m => ({
+                ...m,
+                rating:     m.vote_average ? parseFloat(m.vote_average).toFixed(1) : "N/A",
+                favClass:   isInList("favorites", m.id) ? "active" : "",
+                watchClass: isInList("watchlist",  m.id) ? "active" : ""
+            }))
+        }));
+    }
+
+    // ── COLLECTIONS ───────────────────────────────────────────────
+
+    function loadCollection(genre, container) {
+        $.get(BASE + "/discover/movie", { api_key: API_KEY, with_genres: genre })
+            .done(data => renderMovies(data.results, container));
+    }
+
+    // ── SEARCH ────────────────────────────────────────────────────
+
+    function searchMovies() {
+        $.get(BASE + "/search/movie", { api_key: API_KEY, query: currentQuery, page: currentPage })
+            .done(data => {
+                renderMovies(data.results, "#resultsGrid");
+                buildControls(data.total_pages);
+            });
+    }
+
+    // ── FORMAT ────────────────────────────────────────────────────
+
+    function formatSingle(m) {
+        return {
+            id: m.id,
+            title: m.title,
+            poster: m.poster_path ? IMG_SM + m.poster_path : "https://via.placeholder.com/200x300/1c1c1c/666?text=No+Image",
+            poster_path: m.poster_path,
+            release_date: m.release_date || "N/A",
+            vote_average: m.vote_average,
+            original_language: m.original_language || "N/A",
+            overview: m.overview || "No description available"
+        };
+    }
+
+    function formatMovies(movies) {
+        return movies.map(m => ({
+            ...formatSingle(m),
+            rating:     m.vote_average ? parseFloat(m.vote_average).toFixed(1) : "N/A",
+            favClass:   isInList("favorites", m.id) ? "active" : "",
+            watchClass: isInList("watchlist",  m.id) ? "active" : ""
+        }));
+    }
+
+    // ── RENDER GRID ───────────────────────────────────────────────
+
+    function renderMovies(movies, container) {
+        const template = $("#movie-template").html();
+        const html = Mustache.render(template, { movies: formatMovies(movies.slice(0, 20)) });
+        $(container).html(html);
+        applyLayout();
+    }
+
+    // ── SHOW DETAILS + CAST ───────────────────────────────────────
+
+    function showDetails(movie) {
+        const id = movie.id;
+        const data = {
+            id,
+            poster:       movie.poster_path ? IMG_LG + movie.poster_path : "https://via.placeholder.com/500x750/1c1c1c/666?text=No+Image",
+            title:        movie.title,
+            release_date: movie.release_date || "N/A",
+            vote_average: movie.vote_average ? parseFloat(movie.vote_average).toFixed(1) : "N/A",
+            language:     (movie.original_language || "N/A").toUpperCase(),
+            overview:     movie.overview || "No description available",
+            favClass:     isInList("favorites", id) ? "active" : "",
+            favLabel:     isInList("favorites", id) ? "Remove"  : "Favorite",
+            watchClass:   isInList("watchlist",  id) ? "active" : "",
+            watchLabel:   isInList("watchlist",  id) ? "Remove"  : "Watchlist"
+        };
+
+        const template = $("#details-template").html();
+        $("#movieDetails").html(Mustache.render(template, data)).data("movie", movie);
+
+        // Fetch and append cast — top 3 only, fixed-size images, no horizontal scroll
+        $.get(BASE + "/movie/" + id + "/credits", { api_key: API_KEY })
+            .done(function (credits) {
+                const cast = credits.cast.slice(0, 3);
+                if (!cast.length) return;
+
+                const director = credits.crew.find(p => p.job === "Director");
+
+                let castHTML = '<div class="cast-section">';
+                if (director) {
+                    castHTML += `<p class="director-line"><b>Director:</b> ${$('<div>').text(director.name).html()}</p>`;
+                }
+                castHTML += '<h4>Cast</h4><div class="cast-list">';
+
+                cast.forEach(function (actor) {
+                    const photo = actor.profile_path
+                        ? IMG_CAST + actor.profile_path
+                        : "https://via.placeholder.com/185x278/252525/666?text=?";
+                    const name = $('<div>').text(actor.name).html();
+                    const char = $('<div>').text(actor.character).html();
+                    castHTML += `
+                        <div class="cast-card">
+                            <img src="${photo}" alt="${name}" loading="lazy">
+                            <p class="cast-name">${name}</p>
+                            <p class="cast-char">${char}</p>
+                        </div>`;
+                });
+
+                castHTML += '</div></div>';
+                $("#movieDetails").append(castHTML);
+            });
+    }
+
+    // ── CLICK HANDLERS ────────────────────────────────────────────
+
+    $(document).on("click", ".movie-card", function (e) {
+        if ($(e.target).is(".fav-btn, .watch-btn")) return;
+        const id = $(this).data("id");
+        $.get(BASE + "/movie/" + id, { api_key: API_KEY }).done(movie => showDetails(movie));
+    });
+
+    $(document).on("click", ".fav-btn", function (e) {
+        e.stopPropagation();
+        fetchAndToggle("favorites", parseInt($(this).data("id")));
+    });
+
+    $(document).on("click", ".watch-btn", function (e) {
+        e.stopPropagation();
+        fetchAndToggle("watchlist", parseInt($(this).data("id")));
+    });
+
+    function fetchAndToggle(listKey, id) {
+        $.get(BASE + "/movie/" + id, { api_key: API_KEY }).done(function (movie) {
+            const added = toggleList(listKey, formatSingle(movie));
+            $(`.fav-btn[data-id='${id}']`).toggleClass("active", isInList("favorites", id));
+            $(`.watch-btn[data-id='${id}']`).toggleClass("active", isInList("watchlist", id));
+            const detailMovie = $("#movieDetails").data("movie");
+            if (detailMovie && detailMovie.id === id) showDetails(detailMovie);
+            if ($("#listsView").is(":visible")) renderListsView($(".list-tab.active").data("list"));
+            postToTMDB(listKey === "favorites" ? "favorite" : "watchlist", id, added);
+        });
+    }
+
+    // ── TRENDING CAROUSEL ─────────────────────────────────────────
+
+    function loadTrending() {
+        $.get(BASE + "/trending/movie/week", { api_key: API_KEY })
+            .done(function (data) {
+                const movies = data.results.slice(0, 20);
+                $("#carouselTrack").empty();
+                movies.forEach(function (m) {
+                    const poster     = m.poster_path ? IMG_MD + m.poster_path : "https://via.placeholder.com/342x513/1c1c1c/666?text=No+Image";
+                    const rating     = m.vote_average ? parseFloat(m.vote_average).toFixed(1) : "N/A";
+                    const favClass   = isInList("favorites", m.id) ? "active" : "";
+                    const watchClass = isInList("watchlist",  m.id) ? "active" : "";
+                    const safeTitle  = $('<div>').text(m.title).html();
+
+                    const card = $(`
+                        <div class="carousel-card movie-card" data-id="${m.id}">
+                            <div class="card-poster">
+                                <img src="${poster}" alt="${safeTitle}" loading="lazy">
+                                <div class="card-overlay">
+                                    <button class="fav-btn ${favClass}" data-id="${m.id}" title="Favorite">❤</button>
+                                    <button class="watch-btn ${watchClass}" data-id="${m.id}" title="Watchlist">＋</button>
+                                </div>
+                            </div>
+                            <div class="card-info">
+                                <p class="card-title">${safeTitle}</p>
+                                <span class="card-rating">⭐ ${rating}</span>
+                            </div>
+                        </div>
+                    `);
+
+                    $("#carouselTrack").append(card);
+                    setTimeout(() => card.addClass("show"), 50);
+                });
+            });
+    }
+
+    loadTrending();
+
+    // Drag-to-scroll
+    const $track = $("#carouselTrack");
+    let isDragging = false, dragStartX = 0, scrollStart = 0;
+
+    $track.on("mousedown", function (e) {
+        isDragging = true; dragStartX = e.pageX; scrollStart = $track.scrollLeft();
+        $track.addClass("dragging"); e.preventDefault();
+    });
+    $(document).on("mousemove", function (e) {
+        if (!isDragging) return;
+        $track.scrollLeft(scrollStart - (e.pageX - dragStartX));
+    });
+    $(document).on("mouseup", function () {
+        if (isDragging) { isDragging = false; $track.removeClass("dragging"); }
+    });
+
+    // ── SEARCH PAGINATION / LAYOUT ────────────────────────────────
+
+    function buildControls(totalPages) {
+        const template = $("#controls-template").html();
+        const pages = [];
+        for (let i = 1; i <= Math.min(totalPages, 5); i++)
+            pages.push({ number: i, active: i === currentPage ? "active" : "" });
+
+        $("#controls").html(Mustache.render(template, { pages }));
+
+        $(".page-btn").click(function () { currentPage = parseInt($(this).data("page")); searchMovies(); });
+        $("#gridBtn").click(() => { layout = "grid"; applyLayout(); });
+        $("#listBtn").click(() => { layout = "list";  applyLayout(); });
+        applyLayout();
+    }
+
+    function applyLayout() {
+        const grids = $("#resultsGrid, #discoverGrid, #actionMovies, #horrorMovies, #favoritesList, #watchlistList");
+        if (layout === "list") grids.addClass("list-view");
+        else grids.removeClass("list-view");
+    }
+});
