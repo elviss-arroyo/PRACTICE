@@ -260,37 +260,66 @@ $(document).ready(function () {
     function loadTrending() {
         $.get(BASE + "/trending/movie/week", { api_key: API_KEY })
             .done(function (data) {
-                const movies = data.results.slice(0, 20).map(m => ({
-                    id: m.id,
-                    title: m.title,
-                    poster: m.poster_path
+                const movies = data.results.slice(0, 20);
+                $("#carouselTrack").empty();
+                movies.forEach(function (m) {
+                    const poster = m.poster_path
                         ? "https://image.tmdb.org/t/p/w200" + m.poster_path
-                        : "https://via.placeholder.com/200x300",
-                    rating: m.vote_average ? m.vote_average.toFixed(1) : "N/A",
-                    favClass: isInList("favorites", m.id) ? "active" : "",
-                    watchClass: isInList("watchlist", m.id) ? "active" : ""
-                }));
+                        : "https://via.placeholder.com/200x300?text=No+Image";
+                    const rating = m.vote_average ? parseFloat(m.vote_average).toFixed(1) : "N/A";
+                    const favClass = isInList("favorites", m.id) ? "active" : "";
+                    const watchClass = isInList("watchlist", m.id) ? "active" : "";
 
-                const template = $("#carousel-template").html();
-                const html = Mustache.render(template, { movies });
-                $("#carouselTrack").html(html);
+                    const card = $(`
+                        <div class="carousel-card movie-card" data-id="${m.id}">
+                            <img src="${poster}" alt="${m.title}">
+                            <div class="carousel-card-info">
+                                <p class="carousel-title">${m.title}</p>
+                                <span class="carousel-rating">⭐ ${rating}</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="fav-btn ${favClass}" data-id="${m.id}" title="Favorite">❤</button>
+                                <button class="watch-btn ${watchClass}" data-id="${m.id}" title="Watchlist">🎬</button>
+                            </div>
+                        </div>
+                    `);
+
+                    $("#carouselTrack").append(card);
+                    setTimeout(function () {
+                        card.addClass("show");
+                    }, 50);
+                });
             });
     }
 
     loadTrending();
 
-    const SCROLL_AMT = 880;
+    // ─── CAROUSEL DRAG TO SCROLL ──────────────────────────────────────────────
 
-    $("#carouselPrev").click(function () {
-        $("#carouselTrack").stop(true).animate(
-            { scrollLeft: "-=" + SCROLL_AMT }, 350
-        );
+    const $track = $("#carouselTrack");
+    let isDragging = false;
+    let dragStartX = 0;
+    let scrollStartLeft = 0;
+
+    $track.on("mousedown", function (e) {
+        isDragging = true;
+        dragStartX = e.pageX;
+        scrollStartLeft = $track.scrollLeft();
+        $track.addClass("dragging");
+        e.preventDefault();
     });
 
-    $("#carouselNext").click(function () {
-        $("#carouselTrack").stop(true).animate(
-            { scrollLeft: "+=" + SCROLL_AMT }, 350
-        );
+    $(document).on("mousemove", function (e) {
+        if (!isDragging) return;
+        const dx = e.pageX - dragStartX;
+        $track.scrollLeft(scrollStartLeft - dx);
+    });
+
+    $(document).on("mouseup mouseleave", function () {
+        if (isDragging) {
+            isDragging = false;
+            $track.removeClass("dragging");
+        }
     });
 
     // ─── LISTS TABS ───────────────────────────────────────────────────────────
