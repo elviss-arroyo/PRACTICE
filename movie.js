@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
 
-                    // THIS PART IS THE API SETUP AND GLOBAL STATE
+                    // THIS PART IS THE API SETUP AND GLOBAL STATE 
     const API_KEY  = "4ecce31518d3c79af6da91dc53d038d5";
     const IMG_SM   = "https://image.tmdb.org/t/p/w200";
     const IMG_MD   = "https://image.tmdb.org/t/p/w342";
