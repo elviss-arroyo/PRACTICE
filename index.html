@@ -13,6 +13,12 @@
 
 <header>
     <h1>TMDB Movie Browser</h1>
+    <div class="header-search">
+        <input type="text" id="searchInput" placeholder="Search movies...">
+        <button id="searchBtn">Search</button>
+        <button id="collectionBtn">Collections</button>
+        <button id="listsBtn">My Lists</button>
+    </div>
     <div class="header-actions">
         <div id="authArea">
             <button id="loginBtn">⚙ Login with TMDB</button>
@@ -54,13 +60,6 @@
 <main class="container">
 
     <div class="left-column">
-
-        <section class="search-section">
-            <input type="text" id="searchInput" placeholder="Search movies...">
-            <button id="searchBtn">Search</button>
-            <button id="collectionBtn">Collections</button>
-            <button id="listsBtn">My Lists</button>
-        </section>
 
         <!-- Search View -->
         <div id="searchView">
