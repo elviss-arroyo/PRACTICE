@@ -32,9 +32,6 @@ $(document).ready(function () {
         { id: 9648,  name: "Mystery"     },
         { id: 10749, name: "Romance"     },
         { id: 878,   name: "Sci-Fi"      },
-        { id: 53,    name: "Thriller"    },
-        { id: 10752, name: "War"         },
-        { id: 37,    name: "Western"     }
     ];
 
     // ── STORAGE ──────────────────────────────────────────────────
