@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TMDB Movie App</title>
-
     <link rel="stylesheet" href="style.css">
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
 </head>
-
 <body>
 
 <header>
@@ -18,20 +15,15 @@
 </header>
 
 <main class="container">
-
-    <!-- LEFT -->
     <div class="left-column">
-
         <section class="search-section">
             <input type="text" id="searchInput" placeholder="Search movies...">
             <button id="searchBtn">Search</button>
             <button id="collectionBtn">Collections</button>
-
-            <button id="favoritesBtn">Favorites</button>
-            <button id="watchlistBtn">Watchlist</button>
+            <button id="watchlistBtn">My Watchlist</button>
+            <button id="loginBtn" class="auth-btn">TMDB Login</button>
         </section>
 
-        <!-- SEARCH VIEW -->
         <div id="searchView">
             <section class="search-results">
                 <h2>Search Results</h2>
@@ -40,98 +32,70 @@
             </section>
         </div>
 
-        <!-- COLLECTION VIEW -->
         <div id="collectionView" style="display:none;">
-
             <section class="categories">
                 <h2>Action Movies</h2>
                 <div id="actionMovies" class="category-grid"></div>
             </section>
-
             <section class="categories">
                 <h2>Horror Movies</h2>
                 <div id="horrorMovies" class="category-grid"></div>
             </section>
-
         </div>
 
-        <!-- FAVORITES VIEW -->
-        <div id="favoritesView" style="display:none;">
-            <section class="categories">
-                <h2>My Favorites</h2>
-                <div id="favoritesMovies" class="category-grid"></div>
-            </section>
-        </div>
-
-        <!-- WATCHLIST VIEW -->
         <div id="watchlistView" style="display:none;">
             <section class="categories">
                 <h2>My Watchlist</h2>
-                <div id="watchlistMovies" class="category-grid"></div>
+                <div id="watchlistGrid" class="category-grid"></div>
             </section>
         </div>
-
     </div>
 
-    <!-- RIGHT -->
     <div class="right-column">
-
         <div class="movie-details">
             <h2>Movie Details</h2>
             <div id="movieDetails">
                 <p>Select a movie</p>
             </div>
         </div>
-
     </div>
-
 </main>
 
-<!-- MOVIE TEMPLATE -->
 <script id="movie-template" type="text/template">
-{{#movies}}
-<div class="movie-card" data-id="{{id}}">
-    <img src="{{poster}}" alt="{{title}}">
-    <p>{{title}}</p>
-</div>
-{{/movies}}
+    {{#movies}} 
+    <div class="movie-card" data-id="{{id}}">
+        <img src="{{poster}}" alt="{{title}}"> 
+        <p>{{title}}</p>
+    </div>
+    {{/movies}}
 </script>
 
-<!-- DETAILS TEMPLATE -->
 <script id="details-template" type="text/template">
     <img src="{{poster}}" alt="{{title}}">
     <h3>{{title}}</h3>
-
+    <button class="watchlist-toggle-btn" data-id="{{id}}" data-title="{{title}}" data-poster="{{poster_path}}">
+        Toggle Watchlist
+    </button>
     <p><b>Release:</b> {{release_date}}</p>
     <p><b>Rating:</b> {{vote_average}}</p>
     <p><b>Language:</b> {{language}}</p>
     <p>{{overview}}</p>
-
-    <button id="addFavoriteBtn">❤ Favorite</button>
-    <button id="addWatchlistBtn">➕ Watchlist</button>
 </script>
 
-<!-- CONTROLS -->
 <script id="controls-template" type="text/template">
-<div class="controls-wrapper">
-
-    <div class="pagination">
-        {{#pages}}
-        <button class="page-btn {{active}}" data-page="{{number}}">
-            {{number}}
-        </button>
-        {{/pages}}
+    <div class="controls-wrapper">
+        <div class="pagination"> 
+            {{#pages}}
+            <button class="page-btn {{active}}" data-page="{{number}}">{{number}}</button>
+            {{/pages}}
+        </div>
+        <div class="view-toggle">
+            <button id="gridBtn">Grid</button> 
+            <button id="listBtn">List</button> 
+        </div>
     </div>
-
-    <div class="view-toggle">
-        <button id="gridBtn">Grid</button>
-        <button id="listBtn">List</button>
-    </div>
-
-</div>
 </script>
 
 <script src="movie.js"></script>
-
 </body>
 </html>
