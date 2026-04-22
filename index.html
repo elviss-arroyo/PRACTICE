@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TMDB Movie Browser</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+<title>movie website</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="style2.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- header with search and stuff -->
 <header>
     <h1 style="color: #ffffff;">TMDB Browser</h1>
     <div class="header-search">
@@ -33,7 +33,7 @@
     </div>
 </header>
 
-<!-- AUTH MODAL -->
+<!-- the login popup -->
 <div id="authModal" style="display:none;">
     <div class="modal-backdrop" id="modalBackdrop"></div>
     <div class="modal-box">
@@ -47,7 +47,7 @@
     </div>
 </div>
 
-<!-- TRENDING CAROUSEL -->
+<!-- trending movies at top -->
 <section id="trendingSection">
     <div class="trending-header">
         <h2>Trending This Week</h2>
@@ -58,12 +58,11 @@
     </div>
 </section>
 
-<!-- MAIN LAYOUT -->
+<!-- main content area -->
 <main class="container">
-
     <div class="left-column">
 
-        <!-- Search View -->
+        <!-- search results -->
         <div id="searchView">
             <section class="content-section">
                 <div id="controls"></div>
@@ -71,7 +70,7 @@
             </section>
         </div>
 
-        <!-- Discover / Genre Filter View -->
+        <!-- discover page -->
         <div id="discoverView" style="display:none;">
             <section class="content-section">
                 <h2 class="section-title">Discover by Genre</h2>
@@ -89,7 +88,7 @@
             </section>
         </div>
 
-        <!-- Collections View -->
+        <!-- collections page -->
         <div id="collectionView" style="display:none;">
             <section class="content-section">
                 <h2 class="section-title">Top Rated Movies</h2>
@@ -101,7 +100,7 @@
             </section>
         </div>
 
-        <!-- My Lists View -->
+        <!-- my lists page -->
         <div id="listsView" style="display:none;">
             <section class="content-section">
                 <div class="lists-tabs">
@@ -123,7 +122,7 @@
 
     </div>
 
-    <!-- DETAILS PANEL -->
+    <!-- right side details -->
     <div class="right-column">
         <div class="movie-details">
             <h2>Movie Details</h2>
@@ -132,11 +131,10 @@
             </div>
         </div>
     </div>
-
 </main>
 
-<!-- TEMPLATES -->
 
+<!-- movie card template -->
 <script id="movie-template" type="text/template">
 {{#movies}}
 <div class="movie-card" data-id="{{id}}">
@@ -155,6 +153,7 @@
 {{/movies}}
 </script>
 
+<!-- details template -->
 <script id="details-template" type="text/template">
 <div class="detail-poster-wrap">
     <img src="{{poster}}" alt="{{title}}">
@@ -172,6 +171,7 @@
 </div>
 </script>
 
+<!-- pagination template for search -->
 <script id="controls-template" type="text/template">
 <div class="controls-wrapper">
     <div class="pagination">
@@ -186,6 +186,7 @@
 </div>
 </script>
 
+<!-- pagination template for discover -->
 <script id="discover-controls-template" type="text/template">
 <div class="controls-wrapper">
     <div class="pagination">
@@ -200,6 +201,6 @@
 </div>
 </script>
 
-<script src="movie.js"></script>
+<script src="movie2.js"></script>
 </body>
 </html>
