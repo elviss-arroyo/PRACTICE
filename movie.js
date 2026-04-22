@@ -240,6 +240,17 @@ $(document).ready(function () {
             discoverPage = parseInt($(this).data("page"));
             loadDiscover();
         });
+        $("#discoverGridBtn").click(() => {
+        layout = "grid";
+        applyLayout();
+    });
+
+    $("#discoverListBtn").click(() => {
+        layout = "list";
+        applyLayout();
+    });
+
+    applyLayout();
     }
 
     // ── LISTS TABS ────────────────────────────────────────────────
