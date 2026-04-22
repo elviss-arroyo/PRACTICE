@@ -40,6 +40,20 @@
     </div>
 </div>
 
+<!-- Trending Carousel -->
+<section id="trendingSection">
+    <div class="trending-header">
+        <h2>🔥 Trending This Week</h2>
+        <div class="carousel-controls">
+            <button id="carouselPrev" aria-label="Scroll left">&#8592;</button>
+            <button id="carouselNext" aria-label="Scroll right">&#8594;</button>
+        </div>
+    </div>
+    <div class="carousel-track-wrapper">
+        <div id="carouselTrack" class="carousel-track"></div>
+    </div>
+</section>
+
 <main class="container">
 
     <div class="left-column">
@@ -148,6 +162,23 @@
             <button id="listBtn">List</button>
         </div>
     </div>
+</script>
+
+<!-- Carousel Card Template -->
+<script id="carousel-template" type="text/template">
+    {{#movies}}
+    <div class="carousel-card movie-card" data-id="{{id}}">
+        <img src="{{poster}}" alt="{{title}}">
+        <div class="carousel-card-info">
+            <p class="carousel-title">{{title}}</p>
+            <span class="carousel-rating">⭐ {{rating}}</span>
+        </div>
+        <div class="card-actions">
+            <button class="fav-btn {{favClass}}" data-id="{{id}}" title="Favorite">❤</button>
+            <button class="watch-btn {{watchClass}}" data-id="{{id}}" title="Watchlist">🎬</button>
+        </div>
+    </div>
+    {{/movies}}
 </script>
 
 <script src="movie.js"></script>
