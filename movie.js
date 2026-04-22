@@ -76,7 +76,6 @@ $(document).ready(function () {
                 if (data.success) {
                     $("#tokenInput").val(data.request_token);
                     window.open("https://www.themoviedb.org/authenticate/" + data.request_token, "_blank");
-                    $("#authError").css("color", "#4caf50").text("✔ Approve on TMDB, then click Confirm.");
                 } else {
                     $("#authError").css("color", "#e74c3c").text("Failed to get request token.");
                 }
