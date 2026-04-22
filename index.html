@@ -1,0 +1,70 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+
+    <title>Milestone 3 - TMDB AJAX Movie App</title> <!--  title -->
+
+    <link rel="stylesheet" href="style.css"> <!-- CSS file -->
+</head>
+
+<body>
+
+<header> <!-- Top page -->
+    <h1>Milestone 3 - TMDB AJAX Movie App</h1> <!-- heading -->
+    <p>TMDB Movie Browser</p> 
+</header>
+
+<main class="container"> 
+
+
+    <div class="left-column"> <!-- Left side -->
+
+
+        <section class="search-section"> <!-- Search input -->
+            <input type="text" id="searchInput" placeholder="Search for a movie..."> <!-- Search input -->
+            <button id="searchBtn">Search</button> <!-- Search button -->
+        </section>
+
+        <section class="search-results"> <!-- Section for search results -->
+            <h2>Search Results</h2> <!-- Section title -->
+            <div id="resultsGrid"></div> <!-- Container where search movies appear -->
+        </section>
+
+
+        <section class="categories"> <!-- Section for categories -->
+
+            <h2>Action Movies</h2> <!-- Action section title -->
+            <div id="actionMovies" class="category-grid"></div> <!-- Action movies grid -->
+
+            <h2>Horror Movies</h2> <!-- Horror section title -->
+            <div id="horrorMovies" class="category-grid"></div> <!-- Horror movies grid -->
+
+        </section>
+
+    </div>
+
+  
+    <div class="right-column"> <!-- Right side  -->
+
+        <section class="movie-details"> <!-- Movie details section -->
+            <h2>Movie Details</h2> 
+
+            <div id="movieDetails"> <!--  selected movie info  -->
+                <p>Select a movie to see details</p> <!-- Default -->
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!--  jQuery  -->
+<script src="movie.js"></script> <!--  js file -->
+
+</body>
+
+</html>
