@@ -1,122 +1,177 @@
-:root {
-  --bg: #F0F0F0;
-  --text: #000;
-  --hover: #A9A9A9;
+:root { /* global color variables */
+  --bg: #f0f0f0;
+  --btn-bg: #ffffff;
+  --btn-border: #ccc;
+  --btn-active: #000;
+  --btn-text: #000;
 }
 
-body {
+body { /* main page styling */
   margin: 0;
   font-family: Arial;
   background: var(--bg);
 }
 
-header {
+header { /* top header section */
   text-align: center;
   padding: 30px;
 }
 
-.container {
+
+.container { /* main two-column layout */
+  display: flex;
+  gap: 20px;
   max-width: 1300px;
   margin: auto;
-  display: flex;
-  gap: 30px;
-  padding: 20px;
+  align-items: flex-start;
 }
 
-.left-column {
+/* LEFT COLUMN */
+.left-column { /* main content area */
   flex: 2;
 }
 
-.right-column {
+/* RIGHT COLUMN */
+.right-column { /* movie details panel */
   flex: 1;
   position: sticky;
   top: 20px;
+  align-self: flex-start;
 }
 
-/* SEARCH */
-.search-section {
+.movie-details { /* details box styling */
+  background: white;
+  padding: 15px;
+  border: 1px solid #ddd;
+}
+
+
+.search-section { /* search bar layout */
   display: flex;
   gap: 10px;
   justify-content: center;
+  margin-bottom: 15px;
 }
 
-#searchInput {
-  padding: 10px;
-  width: 300px;
-}
 
-#searchBtn {
-  padding: 10px;
-  background: black;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-/* FILTERS */
-.filters {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin: 15px 0;
-}
-
-.genre-btn {
+button { /* all buttons */
   padding: 8px 12px;
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
   cursor: pointer;
+  transition: 0.2s;
+  font-size: 14px;
 }
 
-/* GRIDS */
+button:hover { /* hover effect */
+  background: #eaeaea;
+}
+
+button.active { /* active button state */
+  background: var(--btn-active);
+  color: white;
+  border-color: black;
+}
+
+
+#searchInput { /* search input box */
+  padding: 8px;
+}
+
+
+.search-results,
+.categories { /* result + category sections */
+  background: white;
+  padding: 15px;
+  margin-top: 20px;
+  border: 1px solid #ddd;
+}
+
+
 #resultsGrid,
-.category-grid {
+.category-grid { /* grid layout for movies */
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 15px;
-}
-
-.movie-card {
-  background: white;
-  border: 1px solid #ddd;
-  padding: 10px;
-  cursor: pointer;
-}
-
-.movie-card:hover {
-  background: var(--hover);
-}
-
-/* DETAILS */
-.movie-details {
-  background: white;
-  padding: 20px;
-  border: 1px solid #ddd;
-}
-
-/* PAGINATION */
-#pagination {
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
   gap: 10px;
 }
 
-.page-btn {
-  padding: 5px 10px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-}
 
-.page-btn.active {
-  background: black;
-  color: white;
-}
-
-/* LOADER */
-#loader {
-  text-align: center;
+.movie-card { /* individual movie card */
+  background: white;
   padding: 10px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  text-align: center;
 }
 
-.hidden {
-  display: none;
+.movie-card img { /* movie poster image */
+  width: 100%;
+}
+
+
+.controls-wrapper { /* pagination view buttons */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+
+.pagination { /* page buttons */
+  display: flex;
+  gap: 5px;
+}
+
+
+.view-toggle { /* grid/list buttons */
+  display: flex;
+  gap: 5px;
+}
+
+
+.list-view { /* switch layout mode */
+  display: block !important;
+}
+
+.list-view .movie-card { /* list layout card */
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  text-align: left;
+}
+
+.list-view .movie-card img { /* smaller image in list mode */
+  width: 80px;
+}
+
+
+@media (max-width: 900px) { /* tablet layout */
+  .container {
+    flex-direction: column;
+  }
+
+  .right-column {
+    position: static;
+  }
+
+  #resultsGrid,
+  .category-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) { /* mobile layout */
+  #resultsGrid,
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 400px) { /* small mobile */
+  #resultsGrid,
+  .category-grid {
+    grid-template-columns: 1fr;
+  }
 }
