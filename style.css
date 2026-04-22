@@ -389,6 +389,8 @@ button.active {
 .carousel-track-wrapper {
   overflow: hidden;
   border-radius: 6px;
+  background: #2a2a2a;
+  padding-bottom: 2px;
 }
 
 .carousel-track {
@@ -396,16 +398,39 @@ button.active {
   gap: 12px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding-bottom: 10px;
+  padding-bottom: 18px;
   cursor: grab;
   user-select: none;
-  /* Hide scrollbar */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  /* Custom thick scrollbar */
+  scrollbar-width: thick;
+  scrollbar-color: #888 #2a2a2a;
 }
 
 .carousel-track::-webkit-scrollbar {
-  display: none;
+  height: 10px;
+}
+
+.carousel-track::-webkit-scrollbar-track {
+  background: #2a2a2a;
+  border-radius: 10px;
+  margin: 0 4px;
+}
+
+.carousel-track::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+  border: 2px solid #2a2a2a;
+  min-width: 60px;
+}
+
+.carousel-track::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+  cursor: grab;
+}
+
+.carousel-track::-webkit-scrollbar-thumb:active {
+  background: #ccc;
+  cursor: grabbing;
 }
 
 .carousel-track.dragging {
