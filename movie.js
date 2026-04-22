@@ -169,7 +169,6 @@ $(document).ready(function () {
     $("#discoverBtn").click(function () {
         showView("#discoverView");
         buildGenreChips();
-        // Load popular movies by default if no genre selected yet
         if (!activeGenreId) loadDiscover();
     });
 
@@ -228,6 +227,8 @@ $(document).ready(function () {
             });
     }
 
+    // FIX: closing brace was misplaced in original — button handlers and applyLayout
+    // are now correctly inside buildDiscoverControls, called after HTML is injected.
     function buildDiscoverControls(totalPages) {
         const template = $("#discover-controls-template").html();
         const pages = [];
@@ -236,22 +237,25 @@ $(document).ready(function () {
 
         $("#discoverControls").html(Mustache.render(template, { pages }));
 
+        // These bindings must be inside this function so they fire after the
+        // rendered HTML exists in the DOM.
         $(".discover-page-btn").click(function () {
             discoverPage = parseInt($(this).data("page"));
             loadDiscover();
         });
-    $("#discoverGridBtn").click(() => {
-        layout = "grid";
-        applyLayout();
-    });
 
-    $("#discoverListBtn").click(() => {
-        layout = "list";
-        applyLayout();
-    });
+        $("#discoverGridBtn").click(() => {
+            layout = "grid";
+            applyLayout();
+        });
 
-    applyLayout();
-}
+        $("#discoverListBtn").click(() => {
+            layout = "list";
+            applyLayout();
+        });
+
+        applyLayout();
+    }
 
     // ── LISTS TABS ────────────────────────────────────────────────
 
@@ -357,10 +361,10 @@ $(document).ready(function () {
         const template = $("#details-template").html();
         $("#movieDetails").html(Mustache.render(template, data)).data("movie", movie);
 
-        // Fetch and append cast (top 4 only)
+        // Fetch and append cast — top 3 only, fixed-size images, no horizontal scroll
         $.get(BASE + "/movie/" + id + "/credits", { api_key: API_KEY })
             .done(function (credits) {
-                const cast = credits.cast.slice(0, 4);
+                const cast = credits.cast.slice(0, 3);
                 if (!cast.length) return;
 
                 const director = credits.crew.find(p => p.job === "Director");
