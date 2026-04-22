@@ -317,7 +317,7 @@ button.active {
   position: sticky;
   top: 60px;
   align-self: flex-start;
-  max-height: calc(100vh - 60px);
+  height: calc(100vh - 60px);
   overflow-y: auto;
   background: var(--surface);
   border-left: 1px solid var(--border);
@@ -330,7 +330,7 @@ button.active {
 }
 
 .movie-details h2 {
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -398,6 +398,71 @@ button.active {
   font-size: 13px;
   font-weight: 600;
   border-radius: var(--radius);
+}
+
+/* ── CAST SECTION ─────────────────────────────────────────── */
+.cast-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  text-align: left;
+}
+
+.director-line {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.director-line b {
+  color: var(--text);
+}
+
+.cast-section h4 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.cast-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.cast-card {
+  text-align: center;
+}
+
+.cast-card img {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+  background: var(--surface2);
+}
+
+.cast-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cast-char {
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
 }
 
 /* ── CONTENT SECTIONS ─────────────────────────────────────── */
@@ -610,9 +675,7 @@ button.active {
 
 /* ── RESPONSIVE ───────────────────────────────────────────── */
 @media (max-width: 1000px) {
-  .right-column {
-    width: 260px;
-  }
+  .right-column { width: 260px; }
 }
 
 @media (max-width: 768px) {
@@ -621,13 +684,17 @@ button.active {
   .right-column {
     width: 100%;
     position: static;
-    max-height: none;
+    height: auto;
     border-left: none;
     border-top: 1px solid var(--border);
   }
 
   .movie-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .cast-list {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -647,5 +714,9 @@ button.active {
   .movie-grid {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 10px;
+  }
+
+  .cast-list {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
