@@ -58,7 +58,7 @@ $(document).ready(function () {
         if (sessionId && username) {
             $("#authArea").hide();
             $("#userArea").show();
-            $("#usernameDisplay").text("👤 " + username);
+            $("#usernameDisplay").text(username);
         } else {
             $("#authArea").show();
             $("#userArea").hide();
@@ -171,8 +171,8 @@ $(document).ready(function () {
 
     $("#collectionBtn").click(function () {
         showView("#collectionView");
-        loadCollection(28, "#actionMovies");
-        loadCollection(27, "#horrorMovies");
+        loadTopRated("#topRatedMovies");
+        loadMostPopular("#mostPopularMovies");
     });
 
     $("#listsBtn").click(function () {
@@ -191,7 +191,7 @@ $(document).ready(function () {
     // ── GENRE CHIPS ───────────────────────────────────────────────
 
     function buildGenreChips() {
-        if ($("#genreChips").children().length) return; // already built
+        if ($("#genreChips").children().length) return;
         GENRES.forEach(function (g) {
             const chip = $(`<button class="genre-chip" data-id="${g.id}">${g.name}</button>`);
             $("#genreChips").append(chip);
@@ -224,8 +224,6 @@ $(document).ready(function () {
             });
     }
 
-    // FIX: closing brace was misplaced in original — button handlers and applyLayout
-    // are now correctly inside buildDiscoverControls, called after HTML is injected.
     function buildDiscoverControls(totalPages) {
         const template = $("#discover-controls-template").html();
         const pages = [];
@@ -234,22 +232,13 @@ $(document).ready(function () {
 
         $("#discoverControls").html(Mustache.render(template, { pages }));
 
-        // These bindings must be inside this function so they fire after the
-        // rendered HTML exists in the DOM.
         $(".discover-page-btn").click(function () {
             discoverPage = parseInt($(this).data("page"));
             loadDiscover();
         });
 
-        $("#discoverGridBtn").click(() => {
-            layout = "grid";
-            applyLayout();
-        });
-
-        $("#discoverListBtn").click(() => {
-            layout = "list";
-            applyLayout();
-        });
+        $("#discoverGridBtn").click(() => { layout = "grid"; applyLayout(); });
+        $("#discoverListBtn").click(() => { layout = "list"; applyLayout(); });
 
         applyLayout();
     }
@@ -289,8 +278,13 @@ $(document).ready(function () {
 
     // ── COLLECTIONS ───────────────────────────────────────────────
 
-    function loadCollection(genre, container) {
-        $.get(BASE + "/discover/movie", { api_key: API_KEY, with_genres: genre })
+    function loadTopRated(container) {
+        $.get(BASE + "/movie/top_rated", { api_key: API_KEY, page: 1 })
+            .done(data => renderMovies(data.results, container));
+    }
+
+    function loadMostPopular(container) {
+        $.get(BASE + "/movie/popular", { api_key: API_KEY, page: 1 })
             .done(data => renderMovies(data.results, container));
     }
 
@@ -358,7 +352,6 @@ $(document).ready(function () {
         const template = $("#details-template").html();
         $("#movieDetails").html(Mustache.render(template, data)).data("movie", movie);
 
-        // Fetch and append cast — top 3 only, fixed-size images, no horizontal scroll
         $.get(BASE + "/movie/" + id + "/credits", { api_key: API_KEY })
             .done(function (credits) {
                 const cast = credits.cast.slice(0, 3);
@@ -492,7 +485,7 @@ $(document).ready(function () {
     }
 
     function applyLayout() {
-        const grids = $("#resultsGrid, #discoverGrid, #actionMovies, #horrorMovies, #favoritesList, #watchlistList");
+        const grids = $("#resultsGrid, #discoverGrid, #topRatedMovies, #mostPopularMovies, #favoritesList, #watchlistList");
         if (layout === "list") grids.addClass("list-view");
         else grids.removeClass("list-view");
     }
