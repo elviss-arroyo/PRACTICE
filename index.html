@@ -1,116 +1,152 @@
-<!DOCTYPE html> 
-<html lang="en"> 
-<head>
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>TMDB Movie App</title>
-    <link rel="stylesheet" href="style.css"> <!-- CSS file -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
-</head>
+$(document).ready(function () {
+    const API_KEY = "4ecce31518d3c79af6da91dc53d038d5"; // TMDB API key
+    const IMG = "https://image.tmdb.org/t/p/w200"; // base image URL
 
-<body> 
-
-<header> 
-    <h1>TMDB Movie Browser</h1> <!-- title -->
-</header>
-
-<main class="container"> 
-
-    <div class="left-column"> <!-- Left side content -->
-
-        <section class="search-section"> <!-- Search bar section -->
-            <input type="text" id="searchInput" placeholder="Search movies..."> <!-- Search input box -->
-            <button id="searchBtn">Search</button> <!-- Search button -->
-            <button id="collectionBtn">Collections</button> <!-- Switch to collections -->
-        </section>
-
-        <div id="searchView"> <!-- Search results view -->
-
-            <section class="search-results"> <!-- Search results section -->
-                <h2>Search Results</h2> <!-- Title -->
-                <div id="controls"></div> <!-- Pagination + view buttons -->
-                <div id="resultsGrid"></div> <!-- Movie results grid -->
-            </section>
-
-        </div>
-
-        <div id="collectionView" style="display:none;"> <!-- Collections view (hidden by default) -->
-
-            <section class="categories"> <!-- Action category section -->
-                <h2>Action Movies</h2> <!-- Action title -->
-                <div id="actionMovies" class="category-grid"></div> <!-- Action movies grid -->
-            </section>
-
-            <section class="categories"> <!-- Horror category section -->
-                <h2>Horror Movies</h2> <!-- Horror title -->
-                <div id="horrorMovies" class="category-grid"></div> <!-- Horror movies grid -->
-            </section>
-
-        </div>
-
-    </div>
-
-    <div class="right-column"> <!-- Right side panel -->
-        <div class="movie-details"> <!-- Movie details container -->
-            <h2>Movie Details</h2> <!-- Section title -->
-            <div id="movieDetails"> <!-- Selected movie info -->
-                <p>Select a movie</p> <!-- Default message -->
-            </div>
-
-        </div>
-
-    </div>
-
-</main>
+    let currentQuery = ""; 
+    let currentPage = 1; 
+    let layout = "grid"; 
 
 
-<script id="movie-template" type="text/template">
+    $("#searchView").show(); // show search view on load
+    $("#collectionView").hide(); // hide collections on load
+    
+    $("#searchBtn").click(function () { // when search button clicked
+        currentQuery = $("#searchInput").val().trim(); // get input value
+        if (!currentQuery) return; // stop if empty search
+        currentPage = 1; // reset page to 1
 
-    {{#movies}} 
-    <div class="movie-card" data-id="{{id}}">
-        <img src="{{poster}}" alt="{{title}}"> 
-        <p>{{title}}</p> <!-- Movie title -->
-    </div>
-    {{/movies}}
+        $("#collectionView").hide(); // hide collections
+        $("#searchView").show(); // show search results
 
-  
-
-</script>
-
-
-<script id="details-template" type="text/template">
-
-    <img src="{{poster}}" alt="{{title}}"> <!-- Poster image -->
-    <h3>{{title}}</h3> <!-- Movie title -->
-    <p><b>Release:</b> {{release_date}}</p> <!-- Release date -->
-    <p><b>Rating:</b> {{vote_average}}</p> <!-- Rating -->
-    <p><b>Language:</b> {{language}}</p> <!-- Language -->
-    <p>{{overview}}</p> <!-- Movie description -->
-
-</script>
+        searchMovies(); // call API search function
+    });
 
 
-<script id="controls-template" type="text/template">
+    $("#collectionBtn").click(function () { // when collections clicked
+        $("#searchView").hide(); // hide search view
+        $("#collectionView").show(); // show collections view
+        loadCollection(28, "#actionMovies"); // load action movies
+        loadCollection(27, "#horrorMovies"); // load horror movies
+    });
 
-    <div class="controls-wrapper">
+    function loadCollection(genre, container) { // load movies by genre
+        $.get("https://api.themoviedb.org/3/discover/movie", { // API request
+            api_key: API_KEY, // API key
+            with_genres: genre // genre filter
+        }).done(data => { // when data returns
+            renderMovies(data.results, container); // render movies
+        });
+    }
 
-        <div class="pagination"> 
-            {{#pages}}
-            <button class="page-btn {{active}}" data-page="{{number}}"> 
-                {{number}} 
-            </button>
-            {{/pages}}
-        </div>
 
-        <div class="view-toggle"> <!-- View switch buttons -->
-            <button id="gridBtn">Grid</button> 
-            <button id="listBtn">List</button> 
-        </div>
+    
+    function searchMovies() { // search function
+        $.get("https://api.themoviedb.org/3/search/movie", { // API request
+            api_key: API_KEY, // API key
+            query: currentQuery, // search text
+            page: currentPage // page number
+        }).done(data => { // when response comes back
+            renderMovies(data.results, "#resultsGrid"); // show results
+            buildControls(data.total_pages); // build pagination
+        });
+    }
 
-    </div>
 
-</script>
-<script src="movie.js"></script> 
-</body> 
-</html> 
+    
+    function formatMovies(movies) { // format API data
+        return movies.map(m => ({ // loop through movies
+            id: m.id, // movie ID
+            title: m.title, // movie title
+            poster: m.poster_path // poster image
+                ? IMG + m.poster_path // if exists use image
+                : "https://via.placeholder.com/200x300" // fallback image
+        }));
+    }
+
+
+    
+    function renderMovies(movies, container) { // render movies to UI
+        const template = $("#movie-template").html(); // get template
+        const slicedMovies = movies.slice(0, 10); // limit to 10 movies
+        const formattedData = formatMovies(slicedMovies); // format data
+        const html = Mustache.render(template, { // render Mustache
+            movies: formattedData // pass data to template
+        });
+
+        $(container).html(html); 
+
+        applyLayout(); 
+    }
+
+
+    
+    function showDetails(movie) { // show selected movie details
+        const template = $("#details-template").html(); // get template
+        const data = { // build movie detail object
+            poster: movie.poster_path // poster image
+                ? "https://image.tmdb.org/t/p/w300" + movie.poster_path
+                : "https://via.placeholder.com/300x450", // fallback image
+            title: movie.title, // title
+            release_date: movie.release_date || "N/A", // release date
+            vote_average: movie.vote_average, // rating
+            language: (movie.original_language || "N/A").toUpperCase(), // language
+            overview: movie.overview || "No description available" // description
+        };
+
+        $("#movieDetails").html(Mustache.render(template, data)); 
+    }
+
+
+    
+    $(document).on("click", ".movie-card", function () { // click movie card
+        const id = $(this).data("id"); // get movie id
+        $.get("https://api.themoviedb.org/3/movie/" + id, { // API request
+            api_key: API_KEY // API key
+        }).done(movie => showDetails(movie)); // show details
+
+    });
+
+
+    
+    function buildControls(totalPages) { // build pagination controls
+        const template = $("#controls-template").html(); // get template
+        const pages = []; // store page buttons
+        for (let i = 1; i <= Math.min(totalPages, 5); i++) { // limit pages
+            pages.push({ // add page object
+                number: i, // page number
+                active: i === currentPage ? "active" : "" // active page
+            });
+        }
+
+        
+        const html = Mustache.render(template, { pages: pages }); // render controls
+        $("#controls").html(html); // inject controls
+        $(".page-btn").click(function () { // page click event
+            currentPage = parseInt($(this).data("page")); // set page
+            searchMovies(); // reload search
+        });
+
+        $("#gridBtn").click(() => { // grid view button
+            layout = "grid"; // set grid mode
+            applyLayout(); // apply layout
+        });
+
+        $("#listBtn").click(() => { // list view button
+            layout = "list"; // set list mode
+            applyLayout(); // apply layout
+        });
+
+        applyLayout(); // apply layout initially
+    }
+
+
+    function applyLayout() { // layout mode
+
+        if (layout === "list") { // if list view
+            $("#resultsGrid, #actionMovies, #horrorMovies").addClass("list-view"); // list style
+        } else { // if grid view
+            $("#resultsGrid, #actionMovies, #horrorMovies").removeClass("list-view"); // grid style
+        }
+    }
+
+});
