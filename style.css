@@ -1,29 +1,16 @@
-/* THIS PART IS THE RESET AND BASE STYLES */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg:        #121212;
-  --surface:   #1c1c1c;
-  --surface2:  #252525;
-  --border:    #333;
-  --text:      #e8e8e8;
-  --text-muted:#999;
-  --accent:    #2563eb;
-  --accent2:   #1d4ed8;
-  --fav:       #e74c3c;
-  --watch:     #27ae60;
-  --radius:    6px;
-}
+/* reset stuff i think you need this */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+*::before { box-sizing: border-box; }
+*::after { box-sizing: border-box; }
 
 body {
   font-family: 'Inter', Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
+  background: #121212;
+  color: #e8e8e8;
   min-height: 100vh;
 }
 
-
-                    /* THIS PART IS THE STICKY HEADER AT THE TOP */
+/* header */
 header {
   display: flex;
   align-items: center;
@@ -31,7 +18,7 @@ header {
   padding: 0 24px;
   height: 60px;
   background: #0d0d0d;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid #333;
   position: sticky;
   top: 0;
   z-index: 200;
@@ -41,7 +28,7 @@ header h1 {
   font-size: 1.1rem;
   font-weight: 700;
   white-space: nowrap;
-  color: var(--accent);
+  color: #2563eb;
   flex-shrink: 0;
 }
 
@@ -57,17 +44,17 @@ header h1 {
   flex: 1;
   min-width: 0;
   padding: 8px 14px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
+  background: #252525;
+  border: 1px solid #333;
   border-radius: 20px;
-  color: var(--text);
+  color: #e8e8e8;
   font-size: 14px;
   outline: none;
   transition: border-color 0.2s;
 }
 
-.header-search #searchInput:focus { border-color: var(--accent); }
-.header-search #searchInput::placeholder { color: var(--text-muted); }
+.header-search #searchInput:focus { border-color: #2563eb; }
+.header-search #searchInput::placeholder { color: #999; }
 
 .header-actions {
   display: flex;
@@ -78,87 +65,133 @@ header h1 {
 
 #usernameDisplay {
   font-size: 14px;
-  color: var(--accent);
+  color: #2563eb;
   font-weight: 600;
 }
 
-
-                    /* THIS PART IS THE GLOBAL BUTTON STYLES */
+/* buttons */
 button {
   font-family: inherit;
   font-size: 13px;
-  border-radius: var(--radius);
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.18s;
   border: none;
   padding: 7px 14px;
 }
 
-.btn-primary { background: var(--accent); color: #fff; font-weight: 600; }
-.btn-primary:hover { background: var(--accent2); }
+.btn-primary {
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+}
+.btn-primary:hover { background: #1d4ed8; }
 
-.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
-.btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
-
-button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-
-                    /* THIS PART IS THE LOGIN MODAL */
-#authModal {
-  position: fixed; inset: 0; z-index: 1000;
-  display: flex; align-items: center; justify-content: center;
+.btn-ghost {
+  background: transparent;
+  border: 1px solid #333;
+  color: #e8e8e8;
+}
+.btn-ghost:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+  background: transparent;
 }
 
-.modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.75); }
+button.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+/* login modal */
+#authModal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-backdrop {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.75);
+}
 
 .modal-box {
-  position: relative; z-index: 1;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 30px;
-  max-width: 420px; width: 90%;
-  box-shadow: 0 16px 48px rgba(0,0,0,0.6); color: var(--text);
+  position: relative;
+  z-index: 1;
+  background: #1c1c1c;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 30px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+  color: #e8e8e8;
 }
 
 .modal-box h2 { margin-bottom: 10px; }
-.modal-box p  { color: var(--text-muted); font-size: 14px; margin-bottom: 14px; }
-.modal-box hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
-.modal-note   { font-size: 13px; margin-bottom: 8px; }
+.modal-box p { color: #999; font-size: 14px; margin-bottom: 14px; }
+.modal-box hr { border: none; border-top: 1px solid #333; margin: 18px 0; }
+.modal-note { font-size: 13px; margin-bottom: 8px; }
 
 .modal-box input[type="text"] {
-  width: 100%; padding: 9px 12px;
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: var(--radius); color: var(--text);
-  font-size: 13px; margin-bottom: 10px; outline: none;
+  width: 100%;
+  padding: 9px 12px;
+  background: #252525;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #e8e8e8;
+  font-size: 13px;
+  margin-bottom: 10px;
+  outline: none;
 }
-.modal-box input[type="text"]:focus { border-color: var(--accent); }
-.modal-box .btn-primary, .modal-box .btn-ghost { margin-right: 8px; }
+.modal-box input[type="text"]:focus { border-color: #2563eb; }
+.modal-box .btn-primary { margin-right: 8px; }
+.modal-box .btn-ghost { margin-right: 8px; }
 .error-msg { margin-top: 10px; font-size: 13px; min-height: 18px; }
 
-
-                    /* THIS PART IS THE TRENDING CAROUSEL SECTION */
+/* trending carousel */
 #trendingSection {
-  width: 100%; padding: 20px 24px 0;
-  background: var(--surface); border-bottom: 1px solid var(--border);
+  width: 100%;
+  padding: 20px 24px 0;
+  background: #1c1c1c;
+  border-bottom: 1px solid #333;
 }
 
 .trending-header {
-  display: flex; align-items: center;
-  justify-content: space-between; margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
 }
 
-.trending-header h2 { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+.trending-header h2 { font-size: 1.1rem; font-weight: 700; color: #e8e8e8; }
 
 .carousel-hint {
-  font-size: 11px; color: var(--text-muted);
-  letter-spacing: 0.05em; text-transform: uppercase;
+  font-size: 11px;
+  color: #999;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-.carousel-track-wrapper { overflow: hidden; background: #1a1a1a; }
+.carousel-track-wrapper {
+  overflow: hidden;
+  background: #1a1a1a;
+}
 
 .carousel-track {
-  display: flex; gap: 12px; overflow-x: auto;
-  padding-bottom: 16px; cursor: grab; user-select: none;
-  scrollbar-width: thick; scrollbar-color: #555 #1a1a1a;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  cursor: grab;
+  user-select: none;
+  scrollbar-width: thick;
+  scrollbar-color: #555 #1a1a1a;
 }
 .carousel-track::-webkit-scrollbar { height: 8px; }
 .carousel-track::-webkit-scrollbar-track { background: #1a1a1a; }
@@ -166,40 +199,68 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
 .carousel-track::-webkit-scrollbar-thumb:hover { background: #888; }
 .carousel-track.dragging { cursor: grabbing; scroll-behavior: auto; }
 
-
-                    /* THIS PART IS THE INDIVIDUAL CARDS INSIDE THE CAROUSEL */
+/* carousel cards */
 .carousel-card {
-  flex: 0 0 160px; width: 160px;
-  border-radius: var(--radius); overflow: hidden; cursor: pointer;
-  background: var(--surface2); opacity: 0; transform: translateY(10px);
+  flex: 0 0 160px;
+  width: 160px;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #252525;
+  opacity: 0;
+  transform: translateY(10px);
   transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.2s;
-  border: none; text-align: left;
+  border: none;
+  text-align: left;
 }
 .carousel-card.show { opacity: 1; transform: translateY(0); }
-.carousel-card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 10px 30px rgba(0,0,0,0.6); z-index: 2; }
+.carousel-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  z-index: 2;
+}
 
 .carousel-card .card-poster { position: relative; aspect-ratio: 2/3; overflow: hidden; }
 .carousel-card .card-poster img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
 
 .carousel-card .card-overlay {
-  position: absolute; inset: 0;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
-  display: flex; align-items: flex-end; justify-content: flex-end;
-  gap: 6px; padding: 8px; opacity: 0; transition: opacity 0.2s;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
 }
 .carousel-card:hover .card-overlay { opacity: 1; }
 .carousel-card .card-info { padding: 8px 8px 10px; }
 .carousel-card .card-title {
-  font-size: 12px; font-weight: 600; color: var(--text);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e8e8e8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 3px;
 }
-.carousel-card .card-rating { font-size: 11px; color: var(--text-muted); }
+.carousel-card .card-rating { font-size: 11px; color: #999; }
 
+/* page layout */
+.container {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  align-items: flex-start;
+}
 
-                    /* THIS PART IS THE MAIN TWO-COLUMN PAGE LAYOUT */
-.container { display: flex; gap: 0; width: 100%; align-items: flex-start; }
-
-.left-column { flex: 1; min-width: 0; padding: 24px; }
+.left-column {
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+}
 
 .right-column {
   width: 480px;
@@ -209,64 +270,80 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
   align-self: flex-start;
   height: calc(100vh - 60px);
   overflow-y: auto;
-  background: var(--surface);
-  border-left: 1px solid var(--border);
+  background: #1c1c1c;
+  border-left: 1px solid #333;
 }
 
-
-                    /* THIS PART IS THE MOVIE DETAILS PANEL ON THE RIGHT */
+/* details panel */
 .movie-details { padding: 24px; text-align: center; }
 
 .movie-details h2 {
-  font-size: 0.85rem; font-weight: 700;
-  color: var(--text-muted); text-transform: uppercase;
-  letter-spacing: 0.08em; margin-bottom: 16px;
-  padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #333;
 }
 
-.placeholder-msg { color: var(--text-muted); font-size: 14px; padding: 30px 0; }
+.placeholder-msg { color: #999; font-size: 14px; padding: 30px 0; }
 
 .detail-poster-wrap { width: 100%; margin-bottom: 14px; }
-.detail-poster-wrap img { width: 100%; border-radius: var(--radius); display: block; }
+.detail-poster-wrap img { width: 100%; border-radius: 6px; display: block; }
 
 .movie-details h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
 
 .detail-meta {
-  display: flex; flex-direction: column;
-  gap: 5px; font-size: 13px; color: var(--text-muted); margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 12px;
   text-align: left;
 }
 .detail-meta span { display: block; }
-.meta-label { color: var(--text); font-weight: 600; }
+.meta-label { color: #e8e8e8; font-weight: 600; }
 
 .detail-overview {
-  font-size: 13px; line-height: 1.6;
-  color: var(--text-muted); margin-bottom: 16px; text-align: left;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #999;
+  margin-bottom: 16px;
+  text-align: left;
 }
 
 .detail-actions {
-  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 4px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 4px;
 }
 
-.detail-actions .fav-btn,
-.detail-actions .watch-btn {
-  flex: 1; padding: 9px 10px; font-size: 13px; font-weight: 600; border-radius: var(--radius);
-}
+.detail-actions .fav-btn { flex: 1; padding: 9px 10px; font-size: 13px; font-weight: 600; border-radius: 6px; }
+.detail-actions .watch-btn { flex: 1; padding: 9px 10px; font-size: 13px; font-weight: 600; border-radius: 6px; }
 
-
-                    /* THIS PART IS THE CAST AND DIRECTOR SECTION IN THE DETAILS PANEL */
+/* cast section */
 .cast-section {
-  margin-top: 20px; padding-top: 16px;
-  border-top: 1px solid var(--border); text-align: left;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #333;
+  text-align: left;
 }
 
-.director-line { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
-.director-line b { color: var(--text); }
+.director-line { font-size: 13px; color: #999; margin-bottom: 12px; }
+.director-line b { color: #e8e8e8; }
 
 .cast-section h4 {
-  font-size: 0.8rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--text-muted); margin-bottom: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #999;
+  margin-bottom: 12px;
 }
 
 .cast-list {
@@ -286,21 +363,29 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
   object-position: center center;
   border-radius: 4px;
   display: block;
-  background: var(--surface2);
+  background: #252525;
 }
 
 .cast-name {
-  font-size: 11px; font-weight: 600; color: var(--text);
-  margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-size: 11px;
+  font-weight: 600;
+  color: #e8e8e8;
+  margin-top: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cast-char {
-  font-size: 10px; color: var(--text-muted);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;
+  font-size: 10px;
+  color: #999;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
 }
 
-
-                    /* THIS PART IS THE GENRE FILTER CHIPS IN THE DISCOVER VIEW */
+/* genre buttons */
 .genre-chips {
   display: flex;
   flex-wrap: wrap;
@@ -311,9 +396,9 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
 .genre-chip {
   padding: 6px 16px;
   border-radius: 20px;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--text-muted);
+  border: 1px solid #333;
+  background: #252525;
+  color: #999;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -321,19 +406,18 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
 }
 
 .genre-chip:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--surface2);
+  border-color: #2563eb;
+  color: #2563eb;
+  background: #252525;
 }
 
 .genre-chip.active {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: #2563eb;
+  border-color: #2563eb;
   color: #fff;
 }
 
-
-                    /* THIS PART IS THE SORT DROPDOWN IN THE DISCOVER VIEW */
+/* sort dropdown */
 .discover-sort {
   display: flex;
   align-items: center;
@@ -341,130 +425,178 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
   margin-bottom: 16px;
 }
 
-.discover-sort label {
-  font-size: 13px;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
+.discover-sort label { font-size: 13px; color: #999; white-space: nowrap; }
 
 .discover-sort select {
   padding: 7px 12px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text);
+  background: #252525;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #e8e8e8;
   font-size: 13px;
   font-family: inherit;
   cursor: pointer;
   outline: none;
 }
 
-.discover-sort select:focus { border-color: var(--accent); }
+.discover-sort select:focus { border-color: #2563eb; }
 
-
-                    /* THIS PART IS THE CONTENT SECTION AND TITLE STYLES */
 .content-section { margin-bottom: 32px; }
 
 .section-title {
-  font-size: 1.1rem; font-weight: 700;
-  margin-bottom: 16px; padding-bottom: 8px;
-  border-bottom: 2px solid var(--accent); display: inline-block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #2563eb;
+  display: inline-block;
 }
 
-
-                    /* THIS PART IS THE MOVIE CARD GRID */
+/* movie grid */
 .movie-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 16px;
 }
 
-
-                    /* THIS PART IS THE INDIVIDUAL MOVIE CARDS AND THEIR HOVER OVERLAYS */
+/* movie cards */
 .movie-card {
-  border-radius: var(--radius); overflow: hidden;
-  cursor: pointer; background: var(--surface2);
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #252525;
   transition: transform 0.2s, box-shadow 0.2s;
-  border: 1px solid var(--border);
+  border: 1px solid #333;
 }
-.movie-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+.movie-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
 
 .card-poster { position: relative; aspect-ratio: 2/3; overflow: hidden; }
 .card-poster img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
 .movie-card:hover .card-poster img { transform: scale(1.05); }
 
 .card-overlay {
-  position: absolute; inset: 0;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 50%, transparent 100%);
-  display: flex; align-items: flex-end; justify-content: center;
-  gap: 10px; padding: 12px; opacity: 0; transition: opacity 0.2s;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  opacity: 0;
+  transition: opacity 0.2s;
 }
 .movie-card:hover .card-overlay { opacity: 1; }
 
 .card-info { padding: 8px 10px 10px; }
 .card-title {
-  font-size: 13px; font-weight: 600; color: var(--text);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e8e8e8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 3px;
 }
-.card-rating { font-size: 12px; color: var(--text-muted); }
+.card-rating { font-size: 12px; color: #999; }
 
-
-                    /* THIS PART IS THE FAVORITE AND WATCHLIST BUTTONS ON CARDS */
-.fav-btn, .watch-btn {
-  padding: 6px 10px; font-size: 13px; border-radius: var(--radius);
-  border: none; cursor: pointer; font-weight: 600; transition: all 0.15s;
+/* fav and watchlist buttons */
+.fav-btn {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.15s;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  backdrop-filter: blur(4px);
 }
-.fav-btn { background: rgba(255,255,255,0.15); color: #fff; backdrop-filter: blur(4px); }
-.fav-btn:hover, .fav-btn.active { background: var(--fav); color: #fff; }
-.watch-btn { background: rgba(255,255,255,0.15); color: #fff; backdrop-filter: blur(4px); }
-.watch-btn:hover, .watch-btn.active { background: var(--watch); color: #fff; }
+.fav-btn:hover { background: #e74c3c; color: #fff; }
+.fav-btn.active { background: #e74c3c; color: #fff; }
 
+.watch-btn {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.15s;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  backdrop-filter: blur(4px);
+}
+.watch-btn:hover { background: #27ae60; color: #fff; }
+.watch-btn.active { background: #27ae60; color: #fff; }
 
-                    /* THIS PART IS THE LIST VIEW LAYOUT FOR MOVIE CARDS */
+/* list view */
 .movie-grid.list-view { display: flex; flex-direction: column; gap: 10px; }
 .movie-grid.list-view .movie-card { display: flex; flex-direction: row; height: 90px; }
 .movie-grid.list-view .card-poster { width: 60px; flex-shrink: 0; aspect-ratio: unset; height: 90px; }
 .movie-grid.list-view .card-info { display: flex; flex-direction: column; justify-content: center; flex: 1; }
 .movie-grid.list-view .card-title { white-space: normal; }
 
-
-                    /* THIS PART IS THE PAGINATION AND GRID/LIST TOGGLE CONTROLS */
+/* pagination */
 .controls-wrapper {
-  display: flex; justify-content: space-between;
-  align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 .pagination { display: flex; gap: 6px; }
-.page-btn, .discover-page-btn {
-  background: var(--surface2); border: 1px solid var(--border);
-  color: var(--text); padding: 6px 12px; border-radius: var(--radius);
+
+.page-btn {
+  background: #252525;
+  border: 1px solid #333;
+  color: #e8e8e8;
+  padding: 6px 12px;
+  border-radius: 6px;
 }
-.page-btn:hover, .discover-page-btn:hover { border-color: var(--accent); color: var(--accent); }
-.page-btn.active, .discover-page-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.discover-page-btn {
+  background: #252525;
+  border: 1px solid #333;
+  color: #e8e8e8;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+.page-btn:hover { border-color: #2563eb; color: #2563eb; }
+.discover-page-btn:hover { border-color: #2563eb; color: #2563eb; }
+.page-btn.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+.discover-page-btn.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+
 .view-toggle { display: flex; gap: 6px; }
-.view-toggle button { background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
-.view-toggle button:hover { border-color: var(--accent); color: var(--accent); }
+.view-toggle button { background: #252525; border: 1px solid #333; color: #e8e8e8; }
+.view-toggle button:hover { border-color: #2563eb; color: #2563eb; }
 
-
-                    /* THIS PART IS THE FAVORITES AND WATCHLIST TABS IN MY LISTS */
+/* my lists tabs */
 .lists-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
 .list-tab {
-  background: var(--surface2); border: 1px solid var(--border);
-  color: var(--text-muted); padding: 8px 20px; border-radius: 20px; font-weight: 600;
+  background: #252525;
+  border: 1px solid #333;
+  color: #999;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: 600;
 }
-.list-tab:hover { color: var(--text); border-color: #555; }
-.list-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.list-tab:hover { color: #e8e8e8; border-color: #555; }
+.list-tab.active { background: #2563eb; border-color: #2563eb; color: #fff; }
 
-.empty-msg { color: var(--text-muted); font-size: 14px; padding: 30px 0; }
+.empty-msg { color: #999; font-size: 14px; padding: 30px 0; }
 
-
-                    /* THIS PART IS THE CUSTOM SCROLLBAR STYLING */
+/* scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-track { background: #121212; }
 ::-webkit-scrollbar-thumb { background: #444; border-radius: 6px; }
 ::-webkit-scrollbar-thumb:hover { background: #666; }
 
-
-                    /* THIS PART IS THE RESPONSIVE BREAKPOINTS FOR SMALLER SCREENS */
+/* mobile stuff */
 @media (max-width: 1200px) {
   .right-column { width: 380px; }
 }
@@ -475,7 +607,7 @@ button.active { background: var(--accent); color: #fff; border-color: var(--acce
 
 @media (max-width: 768px) {
   .container { flex-direction: column; }
-  .right-column { width: 100%; position: static; height: auto; border-left: none; border-top: 1px solid var(--border); }
+  .right-column { width: 100%; position: static; height: auto; border-left: none; border-top: 1px solid #333; }
   .movie-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
 }
 
