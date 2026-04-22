@@ -379,29 +379,11 @@ button.active {
   font-weight: 700;
 }
 
-.carousel-controls {
-  display: flex;
-  gap: 8px;
-}
-
-.carousel-controls button {
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  font-size: 18px;
-  border-radius: 50%;
-  background: #fff;
-  border: 1px solid #ccc;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.carousel-controls button:hover {
-  background: #111;
-  color: #fff;
-  border-color: #111;
+.carousel-hint {
+  font-size: 12px;
+  color: #aaa;
+  letter-spacing: 0.03em;
+  user-select: none;
 }
 
 .carousel-track-wrapper {
@@ -414,8 +396,10 @@ button.active {
   gap: 12px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding-bottom: 8px;
-  /* Hide scrollbar visually */
+  padding-bottom: 10px;
+  cursor: grab;
+  user-select: none;
+  /* Hide scrollbar */
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -424,6 +408,12 @@ button.active {
   display: none;
 }
 
+.carousel-track.dragging {
+  cursor: grabbing;
+  scroll-behavior: auto;
+}
+
+/* Fade-in animation for cards */
 .carousel-card {
   flex: 0 0 140px;
   width: 140px;
@@ -434,7 +424,14 @@ button.active {
   overflow: hidden;
   cursor: pointer;
   text-align: center;
-  transition: transform 0.18s, box-shadow 0.18s;
+  transition: transform 0.18s, box-shadow 0.18s, opacity 0.4s ease;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.carousel-card.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .carousel-card:hover {
@@ -445,6 +442,7 @@ button.active {
 .carousel-card img {
   width: 100%;
   display: block;
+  pointer-events: none;
 }
 
 .carousel-card-info {
