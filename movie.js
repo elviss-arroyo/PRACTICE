@@ -58,7 +58,7 @@ $(document).ready(function () {
         if (sessionId && username) {
             $("#authArea").hide();
             $("#userArea").show();
-            $("#usernameDisplay").text("👤 " + username);
+            $("#usernameDisplay").text(username);
         } else {
             $("#authArea").show();
             $("#userArea").hide();
