@@ -14,7 +14,7 @@
 
 <!-- HEADER -->
 <header>
-    <h1>TMDB Browser</h1>
+    <h1>🎬 TMDB Browser</h1>
     <div class="header-search">
         <input type="text" id="searchInput" placeholder="Search movies...">
         <button id="searchBtn" class="btn-primary">Search</button>
@@ -38,11 +38,9 @@
     <div class="modal-backdrop" id="modalBackdrop"></div>
     <div class="modal-box">
         <h2>Login with TMDB</h2>
-        <p>Click below to authenticate with your TMDB account.</p>
         <button id="startAuthBtn" class="btn-primary">Open TMDB Login</button>
         <hr>
-        <p class="modal-note">After approving, paste your request token here:</p>
-        <input type="text" id="tokenInput" placeholder="Paste approved request token...">
+        <input type="text" id="tokenInput" placeholder="After approving, paste your request token here">
         <button id="confirmTokenBtn" class="btn-primary">Confirm &amp; Login</button>
         <button id="cancelAuthBtn" class="btn-ghost">Cancel</button>
         <div id="authError" class="error-msg"></div>
@@ -52,7 +50,7 @@
 <!-- TRENDING CAROUSEL -->
 <section id="trendingSection">
     <div class="trending-header">
-        <h2>🔥 Trending This Week</h2>
+        <h2> Trending This Week</h2>
         <span class="carousel-hint">drag to scroll</span>
     </div>
     <div class="carousel-track-wrapper">
@@ -68,7 +66,6 @@
         <!-- Search View -->
         <div id="searchView">
             <section class="content-section">
-                <h2 class="section-title">Search Results</h2>
                 <div id="controls"></div>
                 <div id="resultsGrid" class="movie-grid"></div>
             </section>
