@@ -3,6 +3,7 @@ $(document).ready(function () {
     const IMG_SM  = "https://image.tmdb.org/t/p/w200";
     const IMG_MD  = "https://image.tmdb.org/t/p/w342";
     const IMG_LG  = "https://image.tmdb.org/t/p/w500";
+    const IMG_CAST= "https://image.tmdb.org/t/p/w185";
     const BASE    = "https://api.themoviedb.org/3";
 
     let currentQuery = "";
@@ -180,7 +181,7 @@ $(document).ready(function () {
         $(container).html(Mustache.render(template, {
             movies: items.map(m => ({
                 ...m,
-                rating: m.vote_average ? parseFloat(m.vote_average).toFixed(1) : "N/A",
+                rating:     m.vote_average ? parseFloat(m.vote_average).toFixed(1) : "N/A",
                 favClass:   isInList("favorites", m.id) ? "active" : "",
                 watchClass: isInList("watchlist",  m.id) ? "active" : ""
             }))
@@ -237,7 +238,7 @@ $(document).ready(function () {
         applyLayout();
     }
 
-    // ── SHOW DETAILS ──────────────────────────────────────────────
+    // ── SHOW DETAILS + CAST ───────────────────────────────────────
 
     function showDetails(movie) {
         const id = movie.id;
@@ -256,8 +257,44 @@ $(document).ready(function () {
             watchClass:   isInList("watchlist",  id) ? "active" : "",
             watchLabel:   isInList("watchlist",  id) ? "Remove"  : "Watchlist"
         };
+
         const template = $("#details-template").html();
         $("#movieDetails").html(Mustache.render(template, data)).data("movie", movie);
+
+        // Fetch and append cast
+        $.get(BASE + "/movie/" + id + "/credits", { api_key: API_KEY })
+            .done(function (credits) {
+                const cast = credits.cast.slice(0, 8);
+                if (!cast.length) return;
+
+                // Director from crew
+                const director = credits.crew.find(p => p.job === "Director");
+
+                let castHTML = '<div class="cast-section">';
+
+                if (director) {
+                    castHTML += `<p class="director-line">🎬 <b>Director:</b> ${director.name}</p>`;
+                }
+
+                castHTML += '<h4>Cast</h4><div class="cast-list">';
+
+                cast.forEach(function (actor) {
+                    const photo = actor.profile_path
+                        ? IMG_CAST + actor.profile_path
+                        : "https://via.placeholder.com/185x278/252525/666?text=?";
+                    const name = $('<div>').text(actor.name).html();
+                    const char = $('<div>').text(actor.character).html();
+                    castHTML += `
+                        <div class="cast-card">
+                            <img src="${photo}" alt="${name}" loading="lazy">
+                            <p class="cast-name">${name}</p>
+                            <p class="cast-char">${char}</p>
+                        </div>`;
+                });
+
+                castHTML += '</div></div>';
+                $("#movieDetails").append(castHTML);
+            });
     }
 
     // ── CLICK HANDLERS ────────────────────────────────────────────
@@ -302,24 +339,23 @@ $(document).ready(function () {
                 const movies = data.results.slice(0, 20);
                 $("#carouselTrack").empty();
                 movies.forEach(function (m) {
-                    const poster = m.poster_path
-                        ? IMG_MD + m.poster_path
-                        : "https://via.placeholder.com/342x513/1c1c1c/666?text=No+Image";
-                    const rating    = m.vote_average ? parseFloat(m.vote_average).toFixed(1) : "N/A";
-                    const favClass  = isInList("favorites", m.id) ? "active" : "";
-                    const watchClass= isInList("watchlist",  m.id) ? "active" : "";
+                    const poster     = m.poster_path ? IMG_MD + m.poster_path : "https://via.placeholder.com/342x513/1c1c1c/666?text=No+Image";
+                    const rating     = m.vote_average ? parseFloat(m.vote_average).toFixed(1) : "N/A";
+                    const favClass   = isInList("favorites", m.id) ? "active" : "";
+                    const watchClass = isInList("watchlist",  m.id) ? "active" : "";
+                    const safeTitle  = $('<div>').text(m.title).html();
 
                     const card = $(`
                         <div class="carousel-card movie-card" data-id="${m.id}">
                             <div class="card-poster">
-                                <img src="${poster}" alt="${$('<div>').text(m.title).html()}" loading="lazy">
+                                <img src="${poster}" alt="${safeTitle}" loading="lazy">
                                 <div class="card-overlay">
                                     <button class="fav-btn ${favClass}" data-id="${m.id}" title="Favorite">❤</button>
                                     <button class="watch-btn ${watchClass}" data-id="${m.id}" title="Watchlist">＋</button>
                                 </div>
                             </div>
                             <div class="card-info">
-                                <p class="card-title">${$('<div>').text(m.title).html()}</p>
+                                <p class="card-title">${safeTitle}</p>
                                 <span class="card-rating">⭐ ${rating}</span>
                             </div>
                         </div>
