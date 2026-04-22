@@ -85,8 +85,6 @@
                         <option value="popularity.desc">Most Popular</option>
                         <option value="vote_average.desc">Highest Rated</option>
                         <option value="release_date.desc">Newest First</option>
-                        <option value="release_date.asc">Oldest First</option>
-                        <option value="revenue.desc">Highest Revenue</option>
                     </select>
                 </div>
                 <div id="discoverControls"></div>
@@ -166,9 +164,9 @@
 </div>
 <h3>{{title}}</h3>
 <div class="detail-meta">
-    <span>📅 {{release_date}}</span>
-    <span>⭐ {{vote_average}}</span>
-    <span>🌐 {{language}}</span>
+    <span><span class="meta-label">Release Date:</span> {{release_date}}</span>
+    <span><span class="meta-label">Rating:</span> {{vote_average}}</span>
+    <span><span class="meta-label">Language:</span> {{language}}</span>
 </div>
 <p class="detail-overview">{{overview}}</p>
 <div class="detail-actions">
