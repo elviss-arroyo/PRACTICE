@@ -255,6 +255,44 @@ $(document).ready(function () {
     // Default view
     showView("#searchView");
 
+    // ─── TRENDING CAROUSEL ────────────────────────────────────────────────────
+
+    function loadTrending() {
+        $.get(BASE + "/trending/movie/week", { api_key: API_KEY })
+            .done(function (data) {
+                const movies = data.results.slice(0, 20).map(m => ({
+                    id: m.id,
+                    title: m.title,
+                    poster: m.poster_path
+                        ? "https://image.tmdb.org/t/p/w200" + m.poster_path
+                        : "https://via.placeholder.com/200x300",
+                    rating: m.vote_average ? m.vote_average.toFixed(1) : "N/A",
+                    favClass: isInList("favorites", m.id) ? "active" : "",
+                    watchClass: isInList("watchlist", m.id) ? "active" : ""
+                }));
+
+                const template = $("#carousel-template").html();
+                const html = Mustache.render(template, { movies });
+                $("#carouselTrack").html(html);
+            });
+    }
+
+    loadTrending();
+
+    const SCROLL_AMT = 880;
+
+    $("#carouselPrev").click(function () {
+        $("#carouselTrack").stop(true).animate(
+            { scrollLeft: "-=" + SCROLL_AMT }, 350
+        );
+    });
+
+    $("#carouselNext").click(function () {
+        $("#carouselTrack").stop(true).animate(
+            { scrollLeft: "+=" + SCROLL_AMT }, 350
+        );
+    });
+
     // ─── LISTS TABS ───────────────────────────────────────────────────────────
 
     $(document).on("click", ".list-tab", function () {
