@@ -1,487 +1,206 @@
-$(document).ready(function () {
-    const API_KEY  = "4ecce31518d3c79af6da91dc53d038d5";
-    const IMG_SM   = "https://image.tmdb.org/t/p/w200";
-    const IMG_MD   = "https://image.tmdb.org/t/p/w342";
-    const IMG_LG   = "https://image.tmdb.org/t/p/w500";
-    const IMG_CAST = "https://image.tmdb.org/t/p/w185";
-    const BASE     = "https://api.themoviedb.org/3";
-
-    let currentQuery      = "";
-    let currentPage       = 1;
-    let layout            = "grid";
-    let activeGenreId     = null;
-    let discoverPage      = 1;
-    let sessionId         = localStorage.getItem("tmdb_session_id") || null;
-    let accountId         = localStorage.getItem("tmdb_account_id") || null;
-    let username          = localStorage.getItem("tmdb_username")   || null;
-
-    // All TMDB genres
-    const GENRES = [
-        { id: 28,    name: "Action"      },
-        { id: 12,    name: "Adventure"   },
-        { id: 16,    name: "Animation"   },
-        { id: 35,    name: "Comedy"      },
-        { id: 80,    name: "Crime"       },
-        { id: 99,    name: "Documentary" },
-        { id: 18,    name: "Drama"       },
-        { id: 10751, name: "Family"      },
-        { id: 14,    name: "Fantasy"     },
-        { id: 36,    name: "History"     },
-        { id: 27,    name: "Horror"      },
-        { id: 10402, name: "Music"       },
-        { id: 9648,  name: "Mystery"     },
-        { id: 10749, name: "Romance"     },
-        { id: 878,   name: "Sci-Fi"      },
-        { id: 53,    name: "Thriller"    },
-        { id: 10752, name: "War"         },
-        { id: 37,    name: "Western"     }
-    ];
-
-    // ── STORAGE ──────────────────────────────────────────────────
-
-    function getList(key)       { return JSON.parse(localStorage.getItem(key) || "[]"); }
-    function saveList(key, arr) { localStorage.setItem(key, JSON.stringify(arr)); }
-    function isInList(key, id)  { return getList(key).some(m => m.id === id); }
-
-    function addToList(key, movie) {
-        const list = getList(key);
-        if (!list.some(m => m.id === movie.id)) { list.push(movie); saveList(key, list); }
-    }
-
-    function removeFromList(key, id) { saveList(key, getList(key).filter(m => m.id !== id)); }
-
-    function toggleList(key, movie) {
-        if (isInList(key, movie.id)) { removeFromList(key, movie.id); return false; }
-        addToList(key, movie); return true;
-    }
-
-    // ── AUTH UI ───────────────────────────────────────────────────
-
-    function updateAuthUI() {
-        if (sessionId && username) {
-            $("#authArea").hide();
-            $("#userArea").show();
-            $("#usernameDisplay").text("👤 " + username);
-        } else {
-            $("#authArea").show();
-            $("#userArea").hide();
-        }
-    }
-    updateAuthUI();
-
-    $("#loginBtn").click(() => { $("#authModal").show(); $("#authError").text(""); $("#tokenInput").val(""); });
-    $("#cancelAuthBtn, #modalBackdrop").click(() => $("#authModal").hide());
-
-    $("#startAuthBtn").click(function () {
-        $("#authError").text("");
-        $.get(BASE + "/authentication/token/new", { api_key: API_KEY })
-            .done(function (data) {
-                if (data.success) {
-                    $("#tokenInput").val(data.request_token);
-                    window.open("https://www.themoviedb.org/authenticate/" + data.request_token, "_blank");
-                    $("#authError").css("color", "#4caf50").text("✔ Approve on TMDB, then click Confirm.");
-                } else {
-                    $("#authError").css("color", "#e74c3c").text("Failed to get request token.");
-                }
-            })
-            .fail(() => $("#authError").css("color", "#e74c3c").text("Network error."));
-    });
-
-    $("#confirmTokenBtn").click(function () {
-        const token = $("#tokenInput").val().trim();
-        if (!token) { $("#authError").css("color", "#e74c3c").text("Please paste your request token."); return; }
-        $("#authError").css("color", "#999").text("Creating session...");
-
-        $.post(BASE + "/authentication/session/new?api_key=" + API_KEY, { request_token: token })
-            .done(function (data) {
-                if (data.success) {
-                    sessionId = data.session_id;
-                    localStorage.setItem("tmdb_session_id", sessionId);
-                    fetchAccountDetails();
-                } else {
-                    $("#authError").css("color", "#e74c3c").text("Token not approved yet.");
-                }
-            })
-            .fail(() => $("#authError").css("color", "#e74c3c").text("Error. Approve the token on TMDB first."));
-    });
-
-    function fetchAccountDetails() {
-        $.get(BASE + "/account", { api_key: API_KEY, session_id: sessionId })
-            .done(function (data) {
-                accountId = data.id; username = data.username;
-                localStorage.setItem("tmdb_account_id", accountId);
-                localStorage.setItem("tmdb_username", username);
-                updateAuthUI();
-                $("#authModal").hide();
-                syncTMDBLists();
-            })
-            .fail(() => $("#authError").css("color", "#e74c3c").text("Session valid but failed to fetch account."));
-    }
-
-    function syncTMDBLists() {
-        if (!sessionId || !accountId) return;
-        $.get(BASE + "/account/" + accountId + "/favorite/movies", { api_key: API_KEY, session_id: sessionId })
-            .done(data => data.results && data.results.forEach(m => addToList("favorites", formatSingle(m))));
-        $.get(BASE + "/account/" + accountId + "/watchlist/movies", { api_key: API_KEY, session_id: sessionId })
-            .done(data => data.results && data.results.forEach(m => addToList("watchlist", formatSingle(m))));
-    }
-
-    function postToTMDB(listType, mediaId, add) {
-        if (!sessionId || !accountId) return;
-        const body = listType === "favorite"
-            ? { media_type: "movie", media_id: mediaId, favorite: add }
-            : { media_type: "movie", media_id: mediaId, watchlist: add };
-        $.ajax({
-            url: BASE + "/account/" + accountId + "/" + listType + "?api_key=" + API_KEY + "&session_id=" + sessionId,
-            method: "POST", contentType: "application/json", data: JSON.stringify(body)
-        });
-    }
-
-    $("#logoutBtn").click(function () {
-        if (sessionId) {
-            $.ajax({ url: BASE + "/authentication/session?api_key=" + API_KEY, method: "DELETE",
-                contentType: "application/json", data: JSON.stringify({ session_id: sessionId }) });
-        }
-        sessionId = accountId = username = null;
-        ["tmdb_session_id","tmdb_account_id","tmdb_username"].forEach(k => localStorage.removeItem(k));
-        updateAuthUI();
-    });
-
-    // ── VIEW SWITCHING ────────────────────────────────────────────
-
-    function showView(view) {
-        $("#searchView, #discoverView, #collectionView, #listsView").hide();
-        $(view).show();
-    }
-
-    $("#searchBtn").click(function () {
-        currentQuery = $("#searchInput").val().trim();
-        if (!currentQuery) return;
-        currentPage = 1;
-        showView("#searchView");
-        searchMovies();
-    });
-
-    $("#searchInput").keypress(function (e) {
-        if (e.which === 13) $("#searchBtn").trigger("click");
-    });
-
-    $("#discoverBtn").click(function () {
-        showView("#discoverView");
-        buildGenreChips();
-        // Load popular movies by default if no genre selected yet
-        if (!activeGenreId) loadDiscover();
-    });
-
-    $("#collectionBtn").click(function () {
-        showView("#collectionView");
-        loadCollection(28, "#actionMovies");
-        loadCollection(27, "#horrorMovies");
-    });
-
-    $("#listsBtn").click(function () {
-        showView("#listsView");
-        renderListsView("favorites");
-    });
-
-    // Sort change re-runs discover
-    $("#sortSelect").change(function () {
-        discoverPage = 1;
-        loadDiscover();
-    });
-
-    showView("#searchView");
-
-    // ── GENRE CHIPS ───────────────────────────────────────────────
-
-    function buildGenreChips() {
-        if ($("#genreChips").children().length) return; // already built
-        GENRES.forEach(function (g) {
-            const chip = $(`<button class="genre-chip" data-id="${g.id}">${g.name}</button>`);
-            $("#genreChips").append(chip);
-        });
-    }
-
-    $(document).on("click", ".genre-chip", function () {
-        $(".genre-chip").removeClass("active");
-        $(this).addClass("active");
-        activeGenreId = parseInt($(this).data("id"));
-        discoverPage = 1;
-        loadDiscover();
-    });
-
-    // ── DISCOVER / GENRE FILTER ───────────────────────────────────
-
-    function loadDiscover() {
-        const params = {
-            api_key:           API_KEY,
-            sort_by:           $("#sortSelect").val() || "popularity.desc",
-            page:              discoverPage,
-            "vote_count.gte":  50
-        };
-        if (activeGenreId) params.with_genres = activeGenreId;
-
-        $.get(BASE + "/discover/movie", params)
-            .done(function (data) {
-                renderMovies(data.results, "#discoverGrid");
-                buildDiscoverControls(data.total_pages);
-            });
-    }
-
-    function buildDiscoverControls(totalPages) {
-        const template = $("#discover-controls-template").html();
-        const pages = [];
-        for (let i = 1; i <= Math.min(totalPages, 5); i++)
-            pages.push({ number: i, active: i === discoverPage ? "active" : "" });
-
-        $("#discoverControls").html(Mustache.render(template, { pages }));
-
-        $(".discover-page-btn").click(function () {
-            discoverPage = parseInt($(this).data("page"));
-            loadDiscover();
-        });
-    }
-
-    // ── LISTS TABS ────────────────────────────────────────────────
-
-    $(document).on("click", ".list-tab", function () {
-        $(".list-tab").removeClass("active");
-        $(this).addClass("active");
-        renderListsView($(this).data("list"));
-    });
-
-    function renderListsView(which) {
-        if (which === "favorites") {
-            $("#favoritesPanel").show(); $("#watchlistPanel").hide();
-            renderStoredList("favorites", "#favoritesList", "#favEmpty");
-        } else {
-            $("#favoritesPanel").hide(); $("#watchlistPanel").show();
-            renderStoredList("watchlist", "#watchlistList", "#watchEmpty");
-        }
-    }
-
-    function renderStoredList(key, container, emptyMsg) {
-        const items = getList(key);
-        if (!items.length) { $(container).html(""); $(emptyMsg).show(); return; }
-        $(emptyMsg).hide();
-        const template = $("#movie-template").html();
-        $(container).html(Mustache.render(template, {
-            movies: items.map(m => ({
-                ...m,
-                rating:     m.vote_average ? parseFloat(m.vote_average).toFixed(1) : "N/A",
-                favClass:   isInList("favorites", m.id) ? "active" : "",
-                watchClass: isInList("watchlist",  m.id) ? "active" : ""
-            }))
-        }));
-    }
-
-    // ── COLLECTIONS ───────────────────────────────────────────────
-
-    function loadCollection(genre, container) {
-        $.get(BASE + "/discover/movie", { api_key: API_KEY, with_genres: genre })
-            .done(data => renderMovies(data.results, container));
-    }
-
-    // ── SEARCH ────────────────────────────────────────────────────
-
-    function searchMovies() {
-        $.get(BASE + "/search/movie", { api_key: API_KEY, query: currentQuery, page: currentPage })
-            .done(data => {
-                renderMovies(data.results, "#resultsGrid");
-                buildControls(data.total_pages);
-            });
-    }
-
-    // ── FORMAT ────────────────────────────────────────────────────
-
-    function formatSingle(m) {
-        return {
-            id: m.id,
-            title: m.title,
-            poster: m.poster_path ? IMG_SM + m.poster_path : "https://via.placeholder.com/200x300/1c1c1c/666?text=No+Image",
-            poster_path: m.poster_path,
-            release_date: m.release_date || "N/A",
-            vote_average: m.vote_average,
-            original_language: m.original_language || "N/A",
-            overview: m.overview || "No description available"
-        };
-    }
-
-    function formatMovies(movies) {
-        return movies.map(m => ({
-            ...formatSingle(m),
-            rating:     m.vote_average ? parseFloat(m.vote_average).toFixed(1) : "N/A",
-            favClass:   isInList("favorites", m.id) ? "active" : "",
-            watchClass: isInList("watchlist",  m.id) ? "active" : ""
-        }));
-    }
-
-    // ── RENDER GRID ───────────────────────────────────────────────
-
-    function renderMovies(movies, container) {
-        const template = $("#movie-template").html();
-        const html = Mustache.render(template, { movies: formatMovies(movies.slice(0, 20)) });
-        $(container).html(html);
-        applyLayout();
-    }
-
-    // ── SHOW DETAILS + CAST ───────────────────────────────────────
-
-    function showDetails(movie) {
-        const id = movie.id;
-        const data = {
-            id,
-            poster:       movie.poster_path ? IMG_LG + movie.poster_path : "https://via.placeholder.com/500x750/1c1c1c/666?text=No+Image",
-            title:        movie.title,
-            release_date: movie.release_date || "N/A",
-            vote_average: movie.vote_average ? parseFloat(movie.vote_average).toFixed(1) : "N/A",
-            language:     (movie.original_language || "N/A").toUpperCase(),
-            overview:     movie.overview || "No description available",
-            favClass:     isInList("favorites", id) ? "active" : "",
-            favLabel:     isInList("favorites", id) ? "Remove"  : "Favorite",
-            watchClass:   isInList("watchlist",  id) ? "active" : "",
-            watchLabel:   isInList("watchlist",  id) ? "Remove"  : "Watchlist"
-        };
-
-        const template = $("#details-template").html();
-        $("#movieDetails").html(Mustache.render(template, data)).data("movie", movie);
-
-        // Fetch and append cast (top 4 only)
-        $.get(BASE + "/movie/" + id + "/credits", { api_key: API_KEY })
-            .done(function (credits) {
-                const cast = credits.cast.slice(0, 4);
-                if (!cast.length) return;
-
-                const director = credits.crew.find(p => p.job === "Director");
-
-                let castHTML = '<div class="cast-section">';
-                if (director) {
-                    castHTML += `<p class="director-line">🎬 <b>Director:</b> ${$('<div>').text(director.name).html()}</p>`;
-                }
-                castHTML += '<h4>Cast</h4><div class="cast-list">';
-
-                cast.forEach(function (actor) {
-                    const photo = actor.profile_path
-                        ? IMG_CAST + actor.profile_path
-                        : "https://via.placeholder.com/185x278/252525/666?text=?";
-                    const name = $('<div>').text(actor.name).html();
-                    const char = $('<div>').text(actor.character).html();
-                    castHTML += `
-                        <div class="cast-card">
-                            <img src="${photo}" alt="${name}" loading="lazy">
-                            <p class="cast-name">${name}</p>
-                            <p class="cast-char">${char}</p>
-                        </div>`;
-                });
-
-                castHTML += '</div></div>';
-                $("#movieDetails").append(castHTML);
-            });
-    }
-
-    // ── CLICK HANDLERS ────────────────────────────────────────────
-
-    $(document).on("click", ".movie-card", function (e) {
-        if ($(e.target).is(".fav-btn, .watch-btn")) return;
-        const id = $(this).data("id");
-        $.get(BASE + "/movie/" + id, { api_key: API_KEY }).done(movie => showDetails(movie));
-    });
-
-    $(document).on("click", ".fav-btn", function (e) {
-        e.stopPropagation();
-        fetchAndToggle("favorites", parseInt($(this).data("id")));
-    });
-
-    $(document).on("click", ".watch-btn", function (e) {
-        e.stopPropagation();
-        fetchAndToggle("watchlist", parseInt($(this).data("id")));
-    });
-
-    function fetchAndToggle(listKey, id) {
-        $.get(BASE + "/movie/" + id, { api_key: API_KEY }).done(function (movie) {
-            const added = toggleList(listKey, formatSingle(movie));
-            $(`.fav-btn[data-id='${id}']`).toggleClass("active", isInList("favorites", id));
-            $(`.watch-btn[data-id='${id}']`).toggleClass("active", isInList("watchlist", id));
-            const detailMovie = $("#movieDetails").data("movie");
-            if (detailMovie && detailMovie.id === id) showDetails(detailMovie);
-            if ($("#listsView").is(":visible")) renderListsView($(".list-tab.active").data("list"));
-            postToTMDB(listKey === "favorites" ? "favorite" : "watchlist", id, added);
-        });
-    }
-
-    // ── TRENDING CAROUSEL ─────────────────────────────────────────
-
-    function loadTrending() {
-        $.get(BASE + "/trending/movie/week", { api_key: API_KEY })
-            .done(function (data) {
-                const movies = data.results.slice(0, 20);
-                $("#carouselTrack").empty();
-                movies.forEach(function (m) {
-                    const poster     = m.poster_path ? IMG_MD + m.poster_path : "https://via.placeholder.com/342x513/1c1c1c/666?text=No+Image";
-                    const rating     = m.vote_average ? parseFloat(m.vote_average).toFixed(1) : "N/A";
-                    const favClass   = isInList("favorites", m.id) ? "active" : "";
-                    const watchClass = isInList("watchlist",  m.id) ? "active" : "";
-                    const safeTitle  = $('<div>').text(m.title).html();
-
-                    const card = $(`
-                        <div class="carousel-card movie-card" data-id="${m.id}">
-                            <div class="card-poster">
-                                <img src="${poster}" alt="${safeTitle}" loading="lazy">
-                                <div class="card-overlay">
-                                    <button class="fav-btn ${favClass}" data-id="${m.id}" title="Favorite">❤</button>
-                                    <button class="watch-btn ${watchClass}" data-id="${m.id}" title="Watchlist">＋</button>
-                                </div>
-                            </div>
-                            <div class="card-info">
-                                <p class="card-title">${safeTitle}</p>
-                                <span class="card-rating">⭐ ${rating}</span>
-                            </div>
-                        </div>
-                    `);
-
-                    $("#carouselTrack").append(card);
-                    setTimeout(() => card.addClass("show"), 50);
-                });
-            });
-    }
-
-    loadTrending();
-
-    // Drag-to-scroll
-    const $track = $("#carouselTrack");
-    let isDragging = false, dragStartX = 0, scrollStart = 0;
-
-    $track.on("mousedown", function (e) {
-        isDragging = true; dragStartX = e.pageX; scrollStart = $track.scrollLeft();
-        $track.addClass("dragging"); e.preventDefault();
-    });
-    $(document).on("mousemove", function (e) {
-        if (!isDragging) return;
-        $track.scrollLeft(scrollStart - (e.pageX - dragStartX));
-    });
-    $(document).on("mouseup", function () {
-        if (isDragging) { isDragging = false; $track.removeClass("dragging"); }
-    });
-
-    // ── SEARCH PAGINATION / LAYOUT ────────────────────────────────
-
-    function buildControls(totalPages) {
-        const template = $("#controls-template").html();
-        const pages = [];
-        for (let i = 1; i <= Math.min(totalPages, 5); i++)
-            pages.push({ number: i, active: i === currentPage ? "active" : "" });
-
-        $("#controls").html(Mustache.render(template, { pages }));
-
-        $(".page-btn").click(function () { currentPage = parseInt($(this).data("page")); searchMovies(); });
-        $("#gridBtn").click(() => { layout = "grid"; applyLayout(); });
-        $("#listBtn").click(() => { layout = "list";  applyLayout(); });
-        applyLayout();
-    }
-
-    function applyLayout() {
-        const grids = $("#resultsGrid, #discoverGrid, #actionMovies, #horrorMovies, #favoritesList, #watchlistList");
-        if (layout === "list") grids.addClass("list-view");
-        else grids.removeClass("list-view");
-    }
-});
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMDB Movie Browser</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+    <h1>🎬 TMDB Browser</h1>
+    <div class="header-search">
+        <input type="text" id="searchInput" placeholder="Search movies...">
+        <button id="searchBtn" class="btn-primary">Search</button>
+        <button id="discoverBtn" class="btn-ghost">Discover</button>
+        <button id="collectionBtn" class="btn-ghost">Collections</button>
+        <button id="listsBtn" class="btn-ghost">My Lists</button>
+    </div>
+    <div class="header-actions">
+        <div id="authArea">
+            <button id="loginBtn" class="btn-ghost">Login with TMDB</button>
+        </div>
+        <div id="userArea" style="display:none;">
+            <span id="usernameDisplay"></span>
+            <button id="logoutBtn" class="btn-ghost">Logout</button>
+        </div>
+    </div>
+</header>
+
+<!-- AUTH MODAL -->
+<div id="authModal" style="display:none;">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-box">
+        <h2>Login with TMDB</h2>
+        <p>Click below to authenticate with your TMDB account.</p>
+        <button id="startAuthBtn" class="btn-primary">Open TMDB Login</button>
+        <hr>
+        <p class="modal-note">After approving, paste your request token here:</p>
+        <input type="text" id="tokenInput" placeholder="Paste approved request token...">
+        <button id="confirmTokenBtn" class="btn-primary">Confirm &amp; Login</button>
+        <button id="cancelAuthBtn" class="btn-ghost">Cancel</button>
+        <div id="authError" class="error-msg"></div>
+    </div>
+</div>
+
+<!-- TRENDING CAROUSEL -->
+<section id="trendingSection">
+    <div class="trending-header">
+        <h2>🔥 Trending This Week</h2>
+        <span class="carousel-hint">drag to scroll</span>
+    </div>
+    <div class="carousel-track-wrapper">
+        <div id="carouselTrack" class="carousel-track"></div>
+    </div>
+</section>
+
+<!-- MAIN LAYOUT -->
+<main class="container">
+
+    <div class="left-column">
+
+        <!-- Search View -->
+        <div id="searchView">
+            <section class="content-section">
+                <h2 class="section-title">Search Results</h2>
+                <div id="controls"></div>
+                <div id="resultsGrid" class="movie-grid"></div>
+            </section>
+        </div>
+
+        <!-- Discover / Genre Filter View -->
+        <div id="discoverView" style="display:none;">
+            <section class="content-section">
+                <h2 class="section-title">Discover by Genre</h2>
+                <div class="genre-chips" id="genreChips"></div>
+                <div class="discover-sort">
+                    <label>Sort by:</label>
+                    <select id="sortSelect">
+                        <option value="popularity.desc">Most Popular</option>
+                        <option value="vote_average.desc">Highest Rated</option>
+                        <option value="release_date.desc">Newest First</option>
+                        <option value="release_date.asc">Oldest First</option>
+                        <option value="revenue.desc">Highest Revenue</option>
+                    </select>
+                </div>
+                <div id="discoverControls"></div>
+                <div id="discoverGrid" class="movie-grid"></div>
+            </section>
+        </div>
+
+        <!-- Collections View -->
+        <div id="collectionView" style="display:none;">
+            <section class="content-section">
+                <h2 class="section-title">Action Movies</h2>
+                <div id="actionMovies" class="movie-grid"></div>
+            </section>
+            <section class="content-section">
+                <h2 class="section-title">Horror Movies</h2>
+                <div id="horrorMovies" class="movie-grid"></div>
+            </section>
+        </div>
+
+        <!-- My Lists View -->
+        <div id="listsView" style="display:none;">
+            <section class="content-section">
+                <div class="lists-tabs">
+                    <button class="list-tab active" data-list="favorites">❤ Favorites</button>
+                    <button class="list-tab" data-list="watchlist">＋ Watchlist</button>
+                </div>
+                <div id="favoritesPanel" class="list-panel">
+                    <h2 class="section-title">❤ Favorites</h2>
+                    <div id="favoritesList" class="movie-grid"></div>
+                    <p class="empty-msg" id="favEmpty" style="display:none;">No favorites yet. Click ❤ on any movie!</p>
+                </div>
+                <div id="watchlistPanel" class="list-panel" style="display:none;">
+                    <h2 class="section-title">＋ Watchlist</h2>
+                    <div id="watchlistList" class="movie-grid"></div>
+                    <p class="empty-msg" id="watchEmpty" style="display:none;">Your watchlist is empty.</p>
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+    <!-- DETAILS PANEL -->
+    <div class="right-column">
+        <div class="movie-details">
+            <h2>Movie Details</h2>
+            <div id="movieDetails">
+                <p class="placeholder-msg">Select a movie to see details</p>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- TEMPLATES -->
+
+<script id="movie-template" type="text/template">
+{{#movies}}
+<div class="movie-card" data-id="{{id}}">
+    <div class="card-poster">
+        <img src="{{poster}}" alt="{{title}}" loading="lazy">
+        <div class="card-overlay">
+            <button class="fav-btn {{favClass}}" data-id="{{id}}" title="Favorite">❤</button>
+            <button class="watch-btn {{watchClass}}" data-id="{{id}}" title="Watchlist">＋</button>
+        </div>
+    </div>
+    <div class="card-info">
+        <p class="card-title">{{title}}</p>
+        <span class="card-rating">⭐ {{rating}}</span>
+    </div>
+</div>
+{{/movies}}
+</script>
+
+<script id="details-template" type="text/template">
+<div class="detail-poster-wrap">
+    <img src="{{poster}}" alt="{{title}}">
+</div>
+<h3>{{title}}</h3>
+<div class="detail-meta">
+    <span>📅 {{release_date}}</span>
+    <span>⭐ {{vote_average}}</span>
+    <span>🌐 {{language}}</span>
+</div>
+<p class="detail-overview">{{overview}}</p>
+<div class="detail-actions">
+    <button class="fav-btn {{favClass}}" data-id="{{id}}">❤ {{favLabel}}</button>
+    <button class="watch-btn {{watchClass}}" data-id="{{id}}">＋ {{watchLabel}}</button>
+</div>
+</script>
+
+<script id="controls-template" type="text/template">
+<div class="controls-wrapper">
+    <div class="pagination">
+        {{#pages}}
+        <button class="page-btn {{active}}" data-page="{{number}}">{{number}}</button>
+        {{/pages}}
+    </div>
+    <div class="view-toggle">
+        <button id="gridBtn">⊞ Grid</button>
+        <button id="listBtn">≡ List</button>
+    </div>
+</div>
+</script>
+
+<script id="discover-controls-template" type="text/template">
+<div class="controls-wrapper">
+    <div class="pagination">
+        {{#pages}}
+        <button class="discover-page-btn {{active}}" data-page="{{number}}">{{number}}</button>
+        {{/pages}}
+    </div>
+</div>
+</script>
+
+<script src="movie.js"></script>
+</body>
+</html>
